@@ -1,0 +1,185 @@
+/*
+ Protein.cpp
+ Izabella Balce
+ i.balce@jacobs-university.de
+ */
+
+#include "Protein.h"
+
+using namespace std;
+
+Protein::Protein() {
+	_name = "";
+	_activatedBy = new vector<string>;
+	_deactivatedBy = new vector<string>;
+	_negRegulated = false;
+}
+Protein::Protein(string name) :
+		_name(name) {
+	_activatedBy = new vector<string>;
+	_deactivatedBy = new vector<string>;
+	_negRegulated = false;
+}
+Protein::Protein(string name, int state, vector<string> *activatedBy,
+		vector<string> *deactivatedBy) :
+		_name(name), _state(state), _activatedBy(activatedBy), _deactivatedBy(
+				deactivatedBy) {
+	this->negRegulated();
+}
+Protein::Protein(const Protein &protein) :
+		_name(protein._name), _state(protein._state), _activatedBy(
+				protein._activatedBy), _deactivatedBy(protein._deactivatedBy), _negRegulated(
+				protein._negRegulated) {
+}
+Protein::~Protein() {
+}
+
+//service methods
+void Protein::selfDegrade(bool negRegulated) {
+	if (!negRegulated and _prev == 1) {
+		_state = 0;
+	}
+	return;
+}
+
+//setters
+Protein& Protein::name(string name) {
+	_name = name;
+	return *this;
+}
+Protein& Protein::state(int state) {
+	_prev = _state;
+	if (state > 0) {
+		_state = 1;
+	} else if (state < 0) {
+		_state = 0;
+	} else {
+		this->selfDegrade(_negRegulated);
+	}
+	return *this;
+}
+Protein& Protein::state(int activatedBy, int deactivatedBy) {
+	_prev = _state;
+	int sumOfStates;
+	if (activatedBy > deactivatedBy) {
+		sumOfStates = 1;
+	} else if (activatedBy < deactivatedBy) {
+		sumOfStates = -1;
+	} else {
+		sumOfStates = 0;
+	}
+//	= activatedBy - deactivatedBy;
+	this->state(sumOfStates);
+	return *this;
+}
+Protein& Protein::activatedBy(Protein &regulator) {
+	_activatedBy->push_back(regulator.name());
+	return *this;
+}
+Protein& Protein::deactivatedBy(Protein &regulator) {
+	_deactivatedBy->push_back(regulator.name());
+	this->negRegulated();
+	return *this;
+}
+Protein& Protein::negRegulated(bool onOff) {
+	_negRegulated = onOff;
+	if (onOff == false) {
+//        cout << "apply self-degrade loop on " << this->name() << endl;
+	}
+	return *this;
+}
+Protein& Protein::reset() {
+	this->state(0);
+	this->_activatedBy->clear();
+	this->_deactivatedBy->clear();
+	return *this;
+}
+void Protein::negRegulated() {
+	if (!_deactivatedBy->empty()) {
+		_negRegulated = true;
+	}
+}
+
+//getters
+string Protein::name() {
+	return _name;
+}
+int Protein::state() {
+	return _state;
+}
+int Protein::prev() {
+	return _prev;
+}
+vector<string> Protein::activatedBy() {
+	return *_activatedBy;
+}
+vector<string> Protein::deactivatedBy() {
+	return *_deactivatedBy;
+}
+Protein& Protein::operator =(const Protein& protein) {
+	this->_state = protein._state;
+	this->_negRegulated = protein._negRegulated;
+	this->_name = protein._name;
+	this->_deactivatedBy = protein._deactivatedBy;
+	this->_activatedBy = protein._activatedBy;
+	return *this;
+}
+bool Protein::operator <(const Protein& protein) const {
+	if (_name == protein._name) {
+		return true;
+	} else {
+		return false;
+	}
+}
+ostream& operator<<(std::ostream& os, vector<string> *proteins) {
+	if (!proteins->empty()) {
+		for (vector<string>::iterator it = proteins->begin();
+				it != proteins->end(); it++) {
+			Protein p(*it);
+			if (it == proteins->begin()) {
+				os << p.name();
+			} else {
+				os << ", " << p.name();
+			}
+		}
+	}
+	return os;
+}
+
+ostream& operator<<(std::ostream& os, const Protein& protein) {
+	os << protein._prev << protein._state << "\t"/*<< "\n"*/<< protein._name
+			<< " \t+ " << protein._activatedBy << "\t- "
+			<< protein._deactivatedBy << endl;
+	return os;
+}
+
+ofstream& operator<<(std::ofstream& ofs, const Protein& protein) {
+	if (protein._state == 1) {
+		ofs << "\"" << protein._name << "\" [shape=box, color=green, style=filled];\n";
+	} else {
+		ofs << "\"" << protein._name << "\" [shape=box, color=gray, style=filled];\n";
+	}
+	if (!protein._negRegulated) {
+		ofs << "\tedge [color=yellow]; \n";
+		ofs << "\t\"" << protein._name << "\" -> \"" << protein._name << "\";"
+				<< endl;
+	}
+	if (!protein._activatedBy->empty()) {
+		ofs << "\tedge [color=green]; \n";
+		for (vector<string>::iterator it = protein._activatedBy->begin();
+				it != protein._activatedBy->end(); it++) {
+			ofs << "\t\"" << (*it) << "\" -> \"" << protein._name << "\";"
+					<< endl;
+		}
+	}
+	if (!protein._deactivatedBy->empty()) {
+		ofs << "\tedge [color=red]; \n";
+		for (vector<string>::iterator it = protein._deactivatedBy->begin();
+				it != protein._deactivatedBy->end(); it++) {
+			ofs << "\t\"" << (*it) << "\" -> \"" << protein._name << "\";"
+					<< endl;
+		}
+	}
+
+	return ofs;
+}
