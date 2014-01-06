@@ -1,5 +1,4 @@
 /*
- 320142
  RandomNetwork.h
  Izabella Balce
  i.balce@jacobs-university.de
@@ -13,9 +12,7 @@
 
 #include "Network.h"
 
-/*
- *
- */
+
 class RandomNetwork: public Network {
 public:
 	RandomNetwork();
