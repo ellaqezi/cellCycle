@@ -19,6 +19,7 @@ public:
 	Protein(std::string name, int state, std::vector<std::string> *activatedBy,
 			std::vector<std::string> *deactivatedBy);
 	Protein(const Protein &protein); // copy constructor
+    Protein(Protein*);
 	virtual ~Protein();
 
 	//service methods
@@ -51,6 +52,7 @@ public:
 	std::vector<std::string> deactivatedBy();
 
 	Protein& operator =(const Protein& protein);
+    Protein* operator =(Protein& p);
 
 	bool operator <(const Protein& protein) const;
 	friend std::ostream& operator<<(std::ostream& os,

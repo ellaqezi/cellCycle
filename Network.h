@@ -22,7 +22,7 @@ class Network: public Protein {
 public:
 	Network();
 	Network(int size);
-	Network(Network const &newNetwork);
+	Network(Network const &other);
 	virtual ~Network();
 
 	Network& addProtein(Protein protein);
@@ -31,6 +31,7 @@ public:
 	Network& updateStates();
 	Network& fixedPoint(std::string strState);
 	Network& fixedPointShort(std::string strState);
+    Network& operator=(const Network& network);
 
 	std::string state() const; //getter of Network state
 	int numProteins();

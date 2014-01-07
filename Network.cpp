@@ -17,8 +17,17 @@ Network::Network(int size) {
 	_proteins->resize(size);
 }
 
-Network::Network(Network const &newNetwork) {
-	_proteins = newNetwork._proteins;
+Network::Network(Network const &other)  {
+    _proteins = new vector<Protein*>;
+    _proteins->reserve(other._proteins->size());
+	vector<Protein> vp;
+    for (std::size_t i = 0; i < other._proteins->size(); ++i){
+//        _proteins[i] = (new Protein(other._proteins->at(i)));
+        vp.push_back(new Protein((other._proteins->at(i))));
+    }
+    for (int i=0; i < other._proteins->size(); i++) {
+        _proteins->push_back(&vp[i]);
+    }
 }
 Network::~Network() {
 	delete _proteins;
@@ -126,7 +135,9 @@ Network& Network::fixedPointShort(std::string strState) {
 //	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
 	return *this;
 }
-
+Network& Network::operator =(const Network& network) {
+    
+}
 string Network::state() const {
 	string state;
 	stringstream ss;

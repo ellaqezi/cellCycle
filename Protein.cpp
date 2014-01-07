@@ -31,6 +31,11 @@ Protein::Protein(const Protein &protein) :
 				protein._activatedBy), _deactivatedBy(protein._deactivatedBy), _negRegulated(
 				protein._negRegulated) {
 }
+Protein::Protein(Protein* protein) :
+_name(protein->_name), _state(protein->_state), _activatedBy(
+                                                           protein->_activatedBy), _deactivatedBy(protein->_deactivatedBy), _negRegulated(
+                                                                                                                                        protein->_negRegulated) {
+}
 Protein::~Protein() {
 }
 
@@ -123,6 +128,10 @@ Protein& Protein::operator =(const Protein& protein) {
 	this->_deactivatedBy = protein._deactivatedBy;
 	this->_activatedBy = protein._activatedBy;
 	return *this;
+}
+Protein* Protein::operator =(Protein &protein) {
+    *this = protein;
+	return this;
 }
 bool Protein::operator <(const Protein& protein) const {
 	if (_name == protein._name) {
