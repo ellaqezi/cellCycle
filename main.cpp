@@ -66,6 +66,7 @@ int main(int argc, const char * argv[]) {
 	RandomNetwork r(n);
 	r.randomise();
 	r.print();
+	r.graph();
 	cout << "hello";
 	return 0;
 }
