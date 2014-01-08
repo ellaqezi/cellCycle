@@ -21,7 +21,7 @@ RandomNetwork::~RandomNetwork() {
 RandomNetwork& RandomNetwork::randomise() {
     srand (time(NULL));
     int p = 0;
-    for (int i = 0; i<3; i++) {
+    for (int i = 0; i < this->numProteins()/4; i++) { //TODO: regulate connectivity
         for (vector<Protein*>::iterator it = this->_proteins->begin(); it!= this->_proteins->end(); it++) {
             p = rand() % _proteins->size();
             while (_proteins->at(p)->name() == (*it)->name()) {

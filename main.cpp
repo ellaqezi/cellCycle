@@ -64,6 +64,7 @@ int main(int argc, const char * argv[]) {
 //	n.basins();
 
 	RandomNetwork r(n);
+	r.addProtein(new Protein("blah"));
 	r.randomise();
 	r.print();
 	r.graph();
