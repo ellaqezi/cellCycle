@@ -29,26 +29,12 @@ Protein::Protein(string name, int state, set<string> *activatedBy,
 Protein::Protein(const Protein &protein) :
 		_name(protein._name), _state(protein._state), _negRegulated(protein._negRegulated) {
             _activatedBy = new set<string>(*protein._activatedBy);
-//            for (set<string>::iterator i = protein._activatedBy->begin(); i != protein._activatedBy->end(); ++i){
-//                _activatedBy->insert(_activatedBy->end(), protein._activatedBy->at(i));
-//            }
             _deactivatedBy = new set<string>(*protein._deactivatedBy);
-//            for (std::size_t i = 0; i < protein._deactivatedBy->size(); ++i){
-//                _deactivatedBy->push_back(protein._deactivatedBy->at(i));
-//            }
         }
 Protein::Protein(Protein* protein) :
-_name(protein->_name), _state(protein->_state), /*_activatedBy(
-                                                           protein->_activatedBy), _deactivatedBy(protein->_deactivatedBy),*/ _negRegulated(
-                                                                                                                                        protein->_negRegulated) {
+_name(protein->_name), _state(protein->_state),  _negRegulated(                                                                                                                          protein->_negRegulated) {
     _activatedBy = new set<string>(protein->_activatedBy->begin(), protein->_activatedBy->end());
-//    for (std::size_t i = 0; i < protein->_activatedBy->size(); ++i){
-//        _activatedBy->push_back(protein->_activatedBy->at(i));
-//    }
     _deactivatedBy = new set<string>(protein->_deactivatedBy->begin(), protein->_deactivatedBy->end());
-//    for (std::size_t i = 0; i < protein->_deactivatedBy->size(); ++i){
-//        _deactivatedBy->insert(_activatedBy->end(), (protein->_deactivatedBy->at(i).string));
-//    }
 }
 Protein::~Protein() {
 }
