@@ -41,9 +41,9 @@ public:
 	void basins();
 
 	Protein& find(std::string protein);
-	int sum(std::vector<std::string> regulators);
-	int sum(std::vector<std::string> posRegulators,
-			std::vector<std::string> negRegulators);
+	int sum(std::set<std::string> regulators);
+	int sum(std::set<std::string> posRegulators,
+			std::set<std::string> negRegulators);
 
 	friend std::ostream& operator<<(std::ostream& os, const Network& proteins);
 	friend std::ofstream& operator<<(std::ofstream& ofs,

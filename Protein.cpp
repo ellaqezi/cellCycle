@@ -10,45 +10,45 @@ using namespace std;
 
 Protein::Protein() {
 	_name = "";
-	_activatedBy = new vector<string>;
-	_deactivatedBy = new vector<string>;
+	_activatedBy = new set<string>;
+	_deactivatedBy = new set<string>;
 	_negRegulated = false;
 }
 Protein::Protein(string name) :
 		_name(name) {
-            _activatedBy = new vector<string>;
-            _deactivatedBy = new vector<string>;
+            _activatedBy = new set<string>;
+            _deactivatedBy = new set<string>;
             _negRegulated = false;
 }
-Protein::Protein(string name, int state, vector<string> *activatedBy,
-		vector<string> *deactivatedBy) :
+Protein::Protein(string name, int state, set<string> *activatedBy,
+		set<string> *deactivatedBy) :
 		_name(name), _state(state), _activatedBy(activatedBy), _deactivatedBy(
 				deactivatedBy) {
 	this->negRegulated();
 }
 Protein::Protein(const Protein &protein) :
 		_name(protein._name), _state(protein._state), _negRegulated(protein._negRegulated) {
-            _activatedBy = new vector<string>;
-            for (std::size_t i = 0; i < protein._activatedBy->size(); ++i){
-                _activatedBy->push_back(protein._activatedBy->at(i));
-            }
-            _deactivatedBy = new vector<string>;
-            for (std::size_t i = 0; i < protein._deactivatedBy->size(); ++i){
-                _deactivatedBy->push_back(protein._deactivatedBy->at(i));
-            }
+            _activatedBy = new set<string>(*protein._activatedBy);
+//            for (set<string>::iterator i = protein._activatedBy->begin(); i != protein._activatedBy->end(); ++i){
+//                _activatedBy->insert(_activatedBy->end(), protein._activatedBy->at(i));
+//            }
+            _deactivatedBy = new set<string>(*protein._deactivatedBy);
+//            for (std::size_t i = 0; i < protein._deactivatedBy->size(); ++i){
+//                _deactivatedBy->push_back(protein._deactivatedBy->at(i));
+//            }
         }
 Protein::Protein(Protein* protein) :
 _name(protein->_name), _state(protein->_state), /*_activatedBy(
                                                            protein->_activatedBy), _deactivatedBy(protein->_deactivatedBy),*/ _negRegulated(
                                                                                                                                         protein->_negRegulated) {
-    _activatedBy = new vector<string>;
-    for (std::size_t i = 0; i < protein->_activatedBy->size(); ++i){
-        _activatedBy->push_back(protein->_activatedBy->at(i));
-    }
-    _deactivatedBy = new vector<string>;
-    for (std::size_t i = 0; i < protein->_deactivatedBy->size(); ++i){
-        _deactivatedBy->push_back(protein->_deactivatedBy->at(i));
-    }
+    _activatedBy = new set<string>(protein->_activatedBy->begin(), protein->_activatedBy->end());
+//    for (std::size_t i = 0; i < protein->_activatedBy->size(); ++i){
+//        _activatedBy->push_back(protein->_activatedBy->at(i));
+//    }
+    _deactivatedBy = new set<string>(protein->_deactivatedBy->begin(), protein->_deactivatedBy->end());
+//    for (std::size_t i = 0; i < protein->_deactivatedBy->size(); ++i){
+//        _deactivatedBy->insert(_activatedBy->end(), (protein->_deactivatedBy->at(i).string));
+//    }
 }
 Protein::~Protein() {
 }
@@ -92,11 +92,11 @@ Protein& Protein::state(int activatedBy, int deactivatedBy) {
 	return *this;
 }
 Protein& Protein::activatedBy(Protein &regulator) {
-	_activatedBy->push_back(regulator.name());
+	_activatedBy->insert(_activatedBy->end(), regulator.name());
 	return *this;
 }
 Protein& Protein::deactivatedBy(Protein &regulator) {
-	_deactivatedBy->push_back(regulator.name());
+	_deactivatedBy->insert(_deactivatedBy->end(), regulator.name());
 	this->negRegulated();
 	return *this;
 }
@@ -109,8 +109,8 @@ Protein& Protein::negRegulated(bool onOff) {
 }
 Protein& Protein::reset() {
 	this->state(0);
-    _activatedBy = new vector<string>;
-    _deactivatedBy = new vector<string>;
+    _activatedBy = new set<string>;
+    _deactivatedBy = new set<string>;
 	return *this;
 }
 void Protein::negRegulated() {
@@ -129,10 +129,10 @@ int Protein::state() {
 int Protein::prev() {
 	return _prev;
 }
-vector<string> Protein::activatedBy() {
+set<string> Protein::activatedBy() {
 	return *_activatedBy;
 }
-vector<string> Protein::deactivatedBy() {
+set<string> Protein::deactivatedBy() {
 	return *_deactivatedBy;
 }
 Protein& Protein::operator =(const Protein& protein) {
@@ -154,9 +154,9 @@ bool Protein::operator <(const Protein& protein) const {
 		return false;
 	}
 }
-ostream& operator<<(std::ostream& os, vector<string> *proteins) {
+ostream& operator<<(std::ostream& os, set<string> *proteins) {
 	if (!proteins->empty()) {
-		for (vector<string>::iterator it = proteins->begin();
+		for (set<string>::iterator it = proteins->begin();
 				it != proteins->end(); it++) {
 			Protein p(*it);
 			if (it == proteins->begin()) {
@@ -187,7 +187,7 @@ ofstream& operator<<(std::ofstream& ofs, const Protein& protein) {
 	}
 	if (!protein._activatedBy->empty()) {
 		ofs << "\tedge [color=green]; \n";
-		for (vector<string>::iterator it = protein._activatedBy->begin();
+		for (set<string>::iterator it = protein._activatedBy->begin();
 				it != protein._activatedBy->end(); it++) {
 			ofs << "\t\"" << (*it) << "\" -> \"" << protein._name << "\";"
 					<< endl;
@@ -195,7 +195,7 @@ ofstream& operator<<(std::ofstream& ofs, const Protein& protein) {
 	}
 	if (!protein._deactivatedBy->empty()) {
 		ofs << "\tedge [color=red]; \n";
-		for (vector<string>::iterator it = protein._deactivatedBy->begin();
+		for (set<string>::iterator it = protein._deactivatedBy->begin();
 				it != protein._deactivatedBy->end(); it++) {
 			ofs << "\t\"" << (*it) << "\" -> \"" << protein._name << "\";"
 					<< endl;

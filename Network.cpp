@@ -191,10 +191,10 @@ Protein& Network::find(std::string protein) {
 	}
 	return *p;
 }
-int Network::sum(vector<string> regulators) {
+int Network::sum(set<string> regulators) {
 	int sum = 0;
 	if (!regulators.empty()) {
-		for (vector<string>::iterator it = regulators.begin();
+		for (set<string>::iterator it = regulators.begin();
 				it != regulators.end(); it++) {
 //        cout << " " << (this->find((*it)).name()) << " "<<(this->find((*it)).state());
 			sum += (this->find((*it))).state();
@@ -202,7 +202,7 @@ int Network::sum(vector<string> regulators) {
 	}
 	return sum;
 }
-int Network::sum(vector<string> posRegulators, vector<string> negRegulators) {
+int Network::sum(set<string> posRegulators, set<string> negRegulators) {
 	int sumOfStates = sum(posRegulators) - sum(negRegulators);
 	return sumOfStates;
 }
