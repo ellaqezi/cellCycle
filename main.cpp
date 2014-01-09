@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
 	r.randomise();
 
 	r.print();
-//	r.basins();
+	r.basins();
 //	r.fixedPointShort(r.binStr(1092));
 	//	r.graph();
 	return 0;

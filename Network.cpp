@@ -217,7 +217,7 @@ void Network::basins() {
 	map<string, int> basins;
 	map<string, string> edges;
 	ofstream os;
-	os.open("basins.gv");
+	os.open("basins2.gv");
 	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
 			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
 
