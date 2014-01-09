@@ -21,6 +21,8 @@ public:
 	RandomNetwork(Network const &network);
 	virtual ~RandomNetwork();
     
-	RandomNetwork& randomise();};
+	RandomNetwork& randomise();
+    int edges;
+};
 
 #endif /* RANDOMNETWORK_H_ */

@@ -116,17 +116,26 @@ Network& Network::fixedPoint(std::string strState) {
 	return *this;
 }
 Network& Network::fixedPointShort(std::string strState) {
+    ofstream os;
+    os.open("basins.gv");
+    os << "digraph " << strState << " {\n";
 	int fpsCount = 0;
 //	cout << strState; //initial << stationary
-	this->reset();
+	
+    this->reset();
 	this->setStates(strState);
 
 	string prevNetState = "";
 	while (prevNetState != this->state()) {
 		prevNetState = this->state();
+        os << "\"" << this->state() << "\" -> ";
+        fpsCount++;
 		this->updateStates(); //initial << stationary
-		fpsCount++;
+        os << "\"" << this->state() << "\";\n";
+
 	}
+    os << "\n}";
+    os.close();
 //	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
 	return *this;
 }

@@ -55,20 +55,22 @@ int main(int argc, const char * argv[]) {
 	cout << "\nTemporal Evolution";
 //	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
 //	n.fixedPointShort("10001000100");
-	n.fixedPoint(n.binStr(1092));
+//	n.fixedPoint(n.binStr(1092));
+	n.print();
 	n.reset();
 //	n.setStates("00001000100");
 	n.graph();
 
 //	cout << "\nFixed points and basin sizes\n";
-//	n.basins();
+	n.basins();
 
 	RandomNetwork r(n);
-	r.addProtein(new Protein("blah"));
+//	r.addProtein(new Protein("blah"));
 	r.randomise();
+//	r.fixedPoint(r.binStr(1092));
 	r.print();
-	r.graph();
-	cout << "hello";
+	r.basins();
+	//	r.graph();
 	return 0;
 }
 
