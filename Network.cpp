@@ -11,18 +11,16 @@ using namespace std;
 Network::Network() {
 	_proteins = new vector<Protein*>;
 }
-
 Network::Network(int size) {
 	_proteins = new vector<Protein*>;
 	_proteins->resize(size);
 }
-
-Network::Network(Network const &other)  {
-    _proteins = new vector<Protein*>;
-    _proteins->reserve(other._proteins->size());
-    for (int i=0; i < other._proteins->size(); i++) {
-        _proteins->push_back(new Protein((other._proteins->at(i))));
-    }
+Network::Network(Network const &other) {
+	_proteins = new vector<Protein*>;
+	_proteins->reserve(other._proteins->size());
+	for (int i = 0; i < other._proteins->size(); i++) {
+		_proteins->push_back(new Protein((other._proteins->at(i))));
+	}
 }
 Network::~Network() {
 	delete _proteins;
@@ -67,7 +65,7 @@ Network& Network::reset() {
 	}
 	ss >> offState;
 	this->setStates(offState);
-    return *this;
+	return *this;
 }
 Network& Network::updateStates() {
 	string state = this->state();
@@ -116,32 +114,74 @@ Network& Network::fixedPoint(std::string strState) {
 	return *this;
 }
 Network& Network::fixedPointShort(std::string strState) {
-    ofstream os;
-    os.open("basins.gv");
-    os << "digraph " << strState << " {\n";
+	ofstream os;
+	os.open("fps.gv");
+	os << "digraph " << strState << " {\n";
 	int fpsCount = 0;
 //	cout << strState; //initial << stationary
-	
-    this->reset();
+
+	this->reset();
 	this->setStates(strState);
 
 	string prevNetState = "";
 	while (prevNetState != this->state()) {
 		prevNetState = this->state();
-        os << "\"" << this->state() << "\" -> ";
-        fpsCount++;
+		fpsCount++;
 		this->updateStates(); //initial << stationary
-        os << "\"" << this->state() << "\";\n";
-
+		if (prevNetState != this->state()) {
+			os << "\"" << prevNetState << "\" -> \"" << this->state()
+					<< "\";\n";
+		}
 	}
-    os << "\n}";
-    os.close();
+	os << "\n}";
+	os.close();
+//	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
+	return *this;
+}
+Network& Network::fixedPointShort(ofstream& ofs, std::string strState) {
+	int fpsCount = 0;
+//	cout << strState; //initial << stationary
+
+	this->reset();
+	this->setStates(strState);
+
+	string prevNetState = "";
+	while (prevNetState != this->state()) {
+		prevNetState = this->state();
+		fpsCount++;
+		this->updateStates(); //initial << stationary
+		if (prevNetState != this->state()) {
+			ofs << "\"" << prevNetState << "\" -> \"" << this->state()
+					<< "\";\n";
+		}
+	}
+//	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
+	return *this;
+}
+Network& Network::fixedPointShort(map<string, string> &map,
+		std::string strState) {
+	int fpsCount = 0;
+//	cout << strState; //initial << stationary
+
+	this->reset();
+	this->setStates(strState);
+
+	string prevNetState = "";
+	while (prevNetState != this->state()) {
+		prevNetState = this->state();
+		fpsCount++;
+		this->updateStates(); //initial << stationary
+		if (prevNetState != this->state()) {
+			map.insert(pair<string, string>(prevNetState, this->state()));
+//			cout << prevNetState << " -> " << this->state() << endl;
+		}
+	}
 //	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
 	return *this;
 }
 Network& Network::operator =(const Network& network) {
-    _proteins = network._proteins;
-    return *this;
+	_proteins = network._proteins;
+	return *this;
 }
 string Network::state() const {
 	string state;
@@ -175,8 +215,15 @@ void Network::graph() {
 void Network::basins() {
 	int networkSize = this->numProteins();
 	map<string, int> basins;
+	map<string, string> edges;
+	ofstream os;
+	os.open("basins.gv");
+	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
+			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
+
 	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
-		this->fixedPointShort(this->binStr(i));
+//		this->fixedPointShort(os, this->binStr(i));
+		this->fixedPointShort(edges, this->binStr(i));
 		if (basins.count(this->state()) <= 0) {
 			basins.insert(pair<string, int>(this->state(), 1));
 		} else {
@@ -184,11 +231,17 @@ void Network::basins() {
 		}
 //		cout << endl;
 	}
+	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
+			it++) {
+		os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
+	}
 	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
 			it++) {
 		cout << it->first << " >> " << it->second << endl;
+		os << "\"" << it->first << "\" [shape=box];\n";
 	}
-
+	os << "\n}";
+	os.close();
 }
 Protein& Network::find(std::string protein) {
 	Protein *p;
