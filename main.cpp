@@ -67,7 +67,6 @@ int main(int argc, const char * argv[]) {
 //	r.addProtein(new Protein("blah"));
 	r.randomise();
 	r.print();
-	string rf = "random";
 	r.basins(r.createGV("random"));
 //	r.fixedPointShort(r.binStr(1092));
 	r.graph();
