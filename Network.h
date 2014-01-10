@@ -42,6 +42,7 @@ public:
 	void graph();
 	void graph(const char *fileName);
 	void basins();
+    void basins(const char *fileName);
 
 	Protein& find(std::string protein);
 	int sum(std::set<std::string> regulators);
@@ -53,6 +54,8 @@ public:
 			const Network& proteins);
 	std::string binStr(unsigned n, int length);
 	std::string binStr(unsigned n);
+    const char* createGV(int count);
+    const char* createGV(std::string s);
 	std::vector<Protein*> *_proteins;
 };
 

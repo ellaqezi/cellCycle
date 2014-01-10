@@ -101,13 +101,14 @@ Network& Network::fixedPoint(std::string strState) {
 		prevNetState = this->state();
 		fpCount++;
 		cout << fpCount << "\t" << *this;
-		const char *file;
-		stringstream ss;
-		string s;
-		ss << fpCount << ".gv";
-		ss >> s;
-		file = s.c_str();
-		this->graph(file);
+//		const char *file;
+//		stringstream ss;
+//		string s;
+//		ss << fpCount << ".gv";
+//		ss >> s;
+//		file = s.c_str();
+//		this->graph(file);
+        this->graph(this->createGV(fpCount));
 		this->updateStates(); //stepwise
 	}
 	cout << "\t<<Stationary @ " << fpCount << " " << this->state() << "\n";
@@ -196,13 +197,27 @@ string Network::state() const {
 int Network::numProteins() {
 	return _proteins->size();
 }
+int Network::sum(set<string> regulators) {
+	int sum = 0;
+	if (!regulators.empty()) {
+		for (set<string>::iterator it = regulators.begin();
+             it != regulators.end(); it++) {
+            //        cout << " " << (this->find((*it)).name()) << " "<<(this->find((*it)).state());
+			sum += (this->find((*it))).state();
+		}
+	}
+	return sum;
+}
+int Network::sum(set<string> posRegulators, set<string> negRegulators) {
+	int sumOfStates = sum(posRegulators) - sum(negRegulators);
+	return sumOfStates;
+}
 void Network::print() {
 	for (vector<Protein*>::iterator it = this->_proteins->begin();
 			it != this->_proteins->end(); it++) {
 		cout << (**it);
 	}
 }
-
 void Network::graph(const char *fileName) {
 	ofstream gdot;
 	gdot.open(fileName);
@@ -211,6 +226,36 @@ void Network::graph(const char *fileName) {
 }
 void Network::graph() {
 	this->graph("graph.gv");
+}
+void Network::basins(const char *fileName) {
+	int networkSize = this->numProteins();
+	map<string, int> basins;
+	map<string, string> edges;
+	ofstream os;
+	os.open(fileName);
+	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
+    << "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
+    
+	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
+		this->fixedPointShort(edges, this->binStr(i));
+		if (basins.count(this->state()) <= 0) {
+			basins.insert(pair<string, int>(this->state(), 1));
+		} else {
+			basins.at(this->state()) += 1;
+		}
+        //		cout << endl;
+	}
+	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
+         it++) {
+		os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
+	}
+	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
+         it++) {
+		cout << it->first << " >> " << it->second << endl;
+		os << "\"" << it->first << "\" [shape=box];\n";
+	}
+	os << "\n}";
+	os.close();
 }
 void Network::basins() {
 	int networkSize = this->numProteins();
@@ -222,7 +267,6 @@ void Network::basins() {
 			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
 
 	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
-//		this->fixedPointShort(os, this->binStr(i));
 		this->fixedPointShort(edges, this->binStr(i));
 		if (basins.count(this->state()) <= 0) {
 			basins.insert(pair<string, int>(this->state(), 1));
@@ -253,36 +297,7 @@ Protein& Network::find(std::string protein) {
 	}
 	return *p;
 }
-int Network::sum(set<string> regulators) {
-	int sum = 0;
-	if (!regulators.empty()) {
-		for (set<string>::iterator it = regulators.begin();
-				it != regulators.end(); it++) {
-//        cout << " " << (this->find((*it)).name()) << " "<<(this->find((*it)).state());
-			sum += (this->find((*it))).state();
-		}
-	}
-	return sum;
-}
-int Network::sum(set<string> posRegulators, set<string> negRegulators) {
-	int sumOfStates = sum(posRegulators) - sum(negRegulators);
-	return sumOfStates;
-}
 
-ostream& operator<<(std::ostream& os, const Network& network) {
-	os << network.state() << endl;
-	return os;
-}
-
-ofstream& operator<<(std::ofstream& ofs, const Network& network) {
-	ofs << "digraph " << network.state() << "  {\n";
-	for (vector<Protein*>::iterator it = network._proteins->begin();
-			it != network._proteins->end(); it++) {
-		ofs << (**it);
-	}
-	ofs << endl << "}";
-	return ofs;
-}
 string Network::binStr(unsigned n, int length) {
 	if (n >= pow(2, length)) {
 		return "exceeds length";
@@ -304,4 +319,31 @@ string Network::binStr(unsigned n, int length) {
 }
 string Network::binStr(unsigned n) {
 	return binStr(n, this->numProteins());
+}
+const char* Network::createGV(int count) {
+    stringstream ss;
+    string s;
+    ss << count << ".gv";
+    ss >> s;
+    return s.c_str();
+}
+const char* Network::createGV(string s) {
+    stringstream ss;
+    ss << s << ".gv";
+    ss >> s;
+    return s.c_str();
+}
+
+ostream& operator<<(std::ostream& os, const Network& network) {
+	os << network.state() << endl;
+	return os;
+}
+ofstream& operator<<(std::ofstream& ofs, const Network& network) {
+	ofs << "digraph " << network.state() << "  {\n";
+	for (vector<Protein*>::iterator it = network._proteins->begin();
+         it != network._proteins->end(); it++) {
+		ofs << (**it);
+	}
+	ofs << endl << "}";
+	return ofs;
 }
