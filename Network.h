@@ -35,27 +35,26 @@ public:
 	Network& fixedPointShort(std::map<std::string, std::string> &edges,
 			std::string strState);
 	Network& operator=(const Network& network);
-
 	std::string state() const; //getter of Network state
 	int numProteins();
+	int sum(std::set<std::string> regulators);
+	int sum(std::set<std::string> posRegulators, std::set<std::string> negRegulators);
+    Protein& find(std::string protein);
 	void print();
 	void graph();
 	void graph(const char *fileName);
 	void basins();
     void basins(const char *fileName);
 
-	Protein& find(std::string protein);
-	int sum(std::set<std::string> regulators);
-	int sum(std::set<std::string> posRegulators,
-			std::set<std::string> negRegulators);
+    std::string binStr(unsigned n, int length);
+	std::string binStr(unsigned n);
+    const char* createGV(int count);
+    const char* createGV(std::string s);
 
 	friend std::ostream& operator<<(std::ostream& os, const Network& proteins);
 	friend std::ofstream& operator<<(std::ofstream& ofs,
 			const Network& proteins);
-	std::string binStr(unsigned n, int length);
-	std::string binStr(unsigned n);
-    const char* createGV(int count);
-    const char* createGV(std::string s);
+
 	std::vector<Protein*> *_proteins;
 };
 

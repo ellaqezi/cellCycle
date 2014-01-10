@@ -212,6 +212,16 @@ int Network::sum(set<string> posRegulators, set<string> negRegulators) {
 	int sumOfStates = sum(posRegulators) - sum(negRegulators);
 	return sumOfStates;
 }
+Protein& Network::find(std::string protein) {
+	Protein *p;
+	for (vector<Protein*>::iterator it = _proteins->begin();
+         it != _proteins->end(); it++) {
+		if ((**it).name() == protein) {
+			p = *it;
+		}
+	}
+	return *p;
+}
 void Network::print() {
 	for (vector<Protein*>::iterator it = this->_proteins->begin();
 			it != this->_proteins->end(); it++) {
@@ -286,16 +296,6 @@ void Network::basins() {
 	}
 	os << "\n}";
 	os.close();
-}
-Protein& Network::find(std::string protein) {
-	Protein *p;
-	for (vector<Protein*>::iterator it = _proteins->begin();
-			it != _proteins->end(); it++) {
-		if ((**it).name() == protein) {
-			p = *it;
-		}
-	}
-	return *p;
 }
 
 string Network::binStr(unsigned n, int length) {
