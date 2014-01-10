@@ -328,10 +328,12 @@ const char* Network::createGV(int count) {
     return s.c_str();
 }
 const char* Network::createGV(string s) {
+	string name;
     stringstream ss;
     ss << s << ".gv";
-    ss >> s;
-    return s.c_str();
+    ss >> name;
+    cout << name;
+    return name.c_str();
 }
 
 ostream& operator<<(std::ostream& os, const Network& network) {
