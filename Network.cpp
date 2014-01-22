@@ -244,34 +244,35 @@ void Network::basins(const char *fileName) {
 	os.close();
 }
 void Network::basins() {
-	int networkSize = this->numProteins();
-	map<string, int> basins;
-	map<string, string> edges;
-	ofstream os;
-	os.open("basins2.gv");
-	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
-			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
-
-	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
-		this->fixedPointShort(edges, this->binStr(i));
-		if (basins.count(this->state()) <= 0) {
-			basins.insert(pair<string, int>(this->state(), 1));
-		} else {
-			basins.at(this->state()) += 1;
-		}
-//		cout << endl;
-	}
-	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
-			it++) {
-		os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
-	}
-	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
-			it++) {
-		cout << it->first << " >> " << it->second << endl;
-		os << "\"" << it->first << "\" [shape=box];\n";
-	}
-	os << "\n}";
-	os.close();
+    this->basins("basins.gv");
+//	int networkSize = this->numProteins();
+//	map<string, int> basins;
+//	map<string, string> edges;
+//	ofstream os;
+//	os.open("basins2.gv");
+//	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
+//			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
+//
+//	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
+//		this->fixedPointShort(edges, this->binStr(i));
+//		if (basins.count(this->state()) <= 0) {
+//			basins.insert(pair<string, int>(this->state(), 1));
+//		} else {
+//			basins.at(this->state()) += 1;
+//		}
+////		cout << endl;
+//	}
+//	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
+//			it++) {
+//		os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
+//	}
+//	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
+//			it++) {
+//		cout << it->first << " >> " << it->second << endl;
+//		os << "\"" << it->first << "\" [shape=box];\n";
+//	}
+//	os << "\n}";
+//	os.close();
 }
 
 string Network::binStr(unsigned n, int length) {
