@@ -1,6 +1,5 @@
 digraph G {
 node[shape=point];
-ranksep = 0.25;
 concentrate=true;
 "00000000001" -> "00000110010";
 "00000000010" -> "00000010011";
@@ -2043,12 +2042,12 @@ concentrate=true;
 "11111111101" -> "01110110101";
 "11111111110" -> "01110010001";
 "11111111111" -> "01110110001";
-"00000000000" [shape=box];
-"00000000100" [shape=box];
-"00001000000" [shape=box];
-"00001000100" [shape=box];
-"00110000000" [shape=box];
-"01000000100" [shape=box];
-"01001000100" [shape=box];
+"00000000000" [shape=box, rank=max];
+"00000000100" [shape=box, rank=max];
+"00001000000" [shape=box, rank=max];
+"00001000100" [shape=box, rank=max];
+"00110000000" [shape=box, rank=max];
+"01000000100" [shape=box, rank=max];
+"01001000100" [shape=box, rank=max];
 
 }

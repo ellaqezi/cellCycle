@@ -12,6 +12,7 @@ RandomNetwork::RandomNetwork() {
 }
 RandomNetwork::RandomNetwork(Network const &network) {
 	new (this) Network(network);
+    this->reset();
     _edges = 0;
     for (vector<Protein*>::iterator it = this->_proteins->begin(); it!= this->_proteins->end(); it++) {
         _edges += (*it)->activatedBy().size() + (*it)->deactivatedBy().size();

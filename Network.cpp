@@ -101,14 +101,7 @@ Network& Network::fixedPoint(std::string strState) {
 		prevNetState = this->state();
 		fpCount++;
 		cout << fpCount << "\t" << *this;
-//		const char *file;
-//		stringstream ss;
-//		string s;
-//		ss << fpCount << ".gv";
-//		ss >> s;
-//		file = s.c_str();
-//		this->graph(file);
-		this->graph(this->createGV(fpCount));
+        this->graph(this->createGV(fpCount));
 		this->updateStates(); //stepwise
 	}
 	cout << "\t<<Stationary @ " << fpCount << " " << this->state() << "\n";
@@ -121,7 +114,6 @@ Network& Network::fixedPointShort(std::string strState) {
 	this->fixedPointShort(os, strState);
 	os << "\n}";
 	os.close();
-//	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
 	return *this;
 }
 Network& Network::fixedPointShort(ofstream& ofs, std::string strState) {
@@ -159,7 +151,6 @@ Network& Network::fixedPointShort(map<string, string> &map,
 		this->updateStates(); //initial << stationary
 		if (prevNetState != this->state()) {
 			map.insert(pair<string, string>(prevNetState, this->state()));
-//			cout << prevNetState << " -> " << this->state() << endl;
 		}
 	}
 //	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
@@ -253,34 +244,35 @@ void Network::basins(const char *fileName) {
 	os.close();
 }
 void Network::basins() {
-	int networkSize = this->numProteins();
-	map<string, int> basins;
-	map<string, string> edges;
-	ofstream os;
-	os.open("basins2.gv");
-	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
-			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
-
-	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
-		this->fixedPointShort(edges, this->binStr(i));
-		if (basins.count(this->state()) <= 0) {
-			basins.insert(pair<string, int>(this->state(), 1));
-		} else {
-			basins.at(this->state()) += 1;
-		}
-//		cout << endl;
-	}
-	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
-			it++) {
-		os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
-	}
-	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
-			it++) {
-		cout << it->first << " >> " << it->second << endl;
-		os << "\"" << it->first << "\" [shape=box];\n";
-	}
-	os << "\n}";
-	os.close();
+    this->basins("basins.gv");
+//	int networkSize = this->numProteins();
+//	map<string, int> basins;
+//	map<string, string> edges;
+//	ofstream os;
+//	os.open("basins2.gv");
+//	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
+//			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
+//
+//	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
+//		this->fixedPointShort(edges, this->binStr(i));
+//		if (basins.count(this->state()) <= 0) {
+//			basins.insert(pair<string, int>(this->state(), 1));
+//		} else {
+//			basins.at(this->state()) += 1;
+//		}
+////		cout << endl;
+//	}
+//	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
+//			it++) {
+//		os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
+//	}
+//	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
+//			it++) {
+//		cout << it->first << " >> " << it->second << endl;
+//		os << "\"" << it->first << "\" [shape=box];\n";
+//	}
+//	os << "\n}";
+//	os.close();
 }
 
 string Network::binStr(unsigned n, int length) {
@@ -317,7 +309,7 @@ const char* Network::createGV(string s) {
 	stringstream ss;
 	ss << s << ".gv";
 	ss >> name;
-	cout << name;
+//	cout << name;
 	return name.c_str();
 }
 
