@@ -22,7 +22,7 @@ public:
 	virtual ~RandomNetwork();
     
 	RandomNetwork& randomise();
-    int edges;
+    int _edges;
 };
 
 #endif /* RANDOMNETWORK_H_ */
