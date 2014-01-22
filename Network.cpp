@@ -111,27 +111,9 @@ Network& Network::fixedPointShort(std::string strState) {
 	ofstream os;
 	os.open("fps.gv");
 	os << "digraph " << strState << " {\n";
-    this->fixedPointShort(os, strState);
-//	int fpsCount = 0;
-////	cout << strState; //initial << stationary
-//
-//	this->reset();
-//	this->setStates(strState);
-//
-//	string prevNetState = "";
-//	while (prevNetState != this->state()) {
-//		prevNetState = this->state();
-//		fpsCount++;
-//		this->updateStates(); //initial << stationary
-//		if (prevNetState != this->state()) {
-//			os << "\"" << prevNetState << "\" -> \"" << this->state()
-//					<< "\";\n";
-//			cout << prevNetState << " -> " << this->state() << endl;
-//		}
-//	}
+	this->fixedPointShort(os, strState);
 	os << "\n}";
 	os.close();
-//	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
 	return *this;
 }
 Network& Network::fixedPointShort(ofstream& ofs, std::string strState) {
@@ -326,7 +308,7 @@ const char* Network::createGV(string s) {
 	stringstream ss;
 	ss << s << ".gv";
 	ss >> name;
-	cout << name;
+//	cout << name;
 	return name.c_str();
 }
 
