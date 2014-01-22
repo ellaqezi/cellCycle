@@ -101,13 +101,6 @@ Network& Network::fixedPoint(std::string strState) {
 		prevNetState = this->state();
 		fpCount++;
 		cout << fpCount << "\t" << *this;
-//		const char *file;
-//		stringstream ss;
-//		string s;
-//		ss << fpCount << ".gv";
-//		ss >> s;
-//		file = s.c_str();
-//		this->graph(file);
         this->graph(this->createGV(fpCount));
 		this->updateStates(); //stepwise
 	}
@@ -118,22 +111,24 @@ Network& Network::fixedPointShort(std::string strState) {
 	ofstream os;
 	os.open("fps.gv");
 	os << "digraph " << strState << " {\n";
-	int fpsCount = 0;
-//	cout << strState; //initial << stationary
-
-	this->reset();
-	this->setStates(strState);
-
-	string prevNetState = "";
-	while (prevNetState != this->state()) {
-		prevNetState = this->state();
-		fpsCount++;
-		this->updateStates(); //initial << stationary
-		if (prevNetState != this->state()) {
-			os << "\"" << prevNetState << "\" -> \"" << this->state()
-					<< "\";\n";
-		}
-	}
+    this->fixedPointShort(os, strState);
+//	int fpsCount = 0;
+////	cout << strState; //initial << stationary
+//
+//	this->reset();
+//	this->setStates(strState);
+//
+//	string prevNetState = "";
+//	while (prevNetState != this->state()) {
+//		prevNetState = this->state();
+//		fpsCount++;
+//		this->updateStates(); //initial << stationary
+//		if (prevNetState != this->state()) {
+//			os << "\"" << prevNetState << "\" -> \"" << this->state()
+//					<< "\";\n";
+//			cout << prevNetState << " -> " << this->state() << endl;
+//		}
+//	}
 	os << "\n}";
 	os.close();
 //	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
@@ -174,7 +169,6 @@ Network& Network::fixedPointShort(map<string, string> &map,
 		this->updateStates(); //initial << stationary
 		if (prevNetState != this->state()) {
 			map.insert(pair<string, string>(prevNetState, this->state()));
-//			cout << prevNetState << " -> " << this->state() << endl;
 		}
 	}
 //	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
