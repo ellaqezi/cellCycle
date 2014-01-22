@@ -26,13 +26,11 @@ public:
 	//service methods
 	virtual int sum(std::set<std::string> regulators) {
 		return 0;
-	}
-	;
+	};
 	virtual int sum(std::set<std::string> posRegulators,
 			std::set<std::string> negRegulators) {
 		return 0;
-	}
-	;
+	};
 	void selfDegrade(bool negRegulated);
 
 	//setters

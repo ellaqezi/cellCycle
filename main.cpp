@@ -52,26 +52,25 @@ int main(int argc, const char * argv[]) {
 			c).addProtein(d).addProtein(e).addProtein(b);
 
 //	n.print();
-	cout << "\nTemporal Evolution";
+//	cout << "\nTemporal Evolution";
 //	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
 	n.fixedPointShort("10001000100");
 //	n.fixedPoint(n.binStr(1092));
 	n.print();
 	n.reset();
 //	n.setStates("00001000100");
-	n.graph();
+//	n.graph();
 
 //	cout << "\nFixed points and basin sizes\n";
-	n.basins();
+//	n.basins();
 
 	RandomNetwork r(n);
 //	r.addProtein(new Protein("blah"));
 	r.randomise();
-
 	r.print();
 	r.basins(r.createGV("random"));
 //	r.fixedPointShort(r.binStr(1092));
-	//	r.graph();
+	r.graph();
 	return 0;
 }
 
@@ -79,6 +78,6 @@ int main(int argc, const char * argv[]) {
  * TODO: control strength >> number of linked active nodes:number of active nodes
  * TODO: convert binary on/off states to gene expression data
  * 	^-- snapshot, average of transient states (from initial on but prior to fixed point), other options??
- * TODO: create random network, ensure that all nodes are either +/- regulating another
+ * create random network, ensure that all nodes are either +/- regulating another
  * VISUALIZATION of network
  */

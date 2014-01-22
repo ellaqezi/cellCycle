@@ -121,6 +121,7 @@ set<string> Protein::activatedBy() {
 set<string> Protein::deactivatedBy() {
 	return *_deactivatedBy;
 }
+
 Protein& Protein::operator =(const Protein& protein) {
 	this->_state = protein._state;
 	this->_negRegulated = protein._negRegulated;
