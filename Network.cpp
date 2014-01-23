@@ -101,10 +101,37 @@ Network& Network::fixedPoint(std::string strState) {
 		prevNetState = this->state();
 		fpCount++;
 		cout << fpCount << "\t" << *this;
-        this->graph(this->createGV(fpCount));
+		this->graph(this->createGV(fpCount));
 		this->updateStates(); //stepwise
 	}
 	cout << "\t<<Stationary @ " << fpCount << " " << this->state() << "\n";
+	return *this;
+}
+
+Network& Network::fixedPoint(std::map<std::string, std::string> &edges, std::map<std::string, int> &edgeCount, std::string strState) {
+	int fpCount = 0;
+//	cout << "\n" << fpCount << "\t" << *this << " setting state to: "
+//			<< strState << "\n"; //stepwise
+
+	this->reset();
+	this->setStates(strState);
+
+	string prevNetState = "";
+	while (prevNetState != this->state()) {
+		prevNetState = this->state();
+		fpCount++;
+		if (edgeCount.count(this->state()) > 0) {
+			edgeCount.at(this->state()) += 1;
+		} else {
+			edgeCount.insert(pair<string, int>(this->state(), 1));
+		}
+//		cout << fpCount << "\t" << *this;
+		this->updateStates(); //stepwise
+		if (prevNetState != this->state()) {
+			edges.insert(pair<string, string>(prevNetState, this->state()));
+		}
+	}
+//	cout << "\t<<Stationary @ " << fpCount << " " << this->state() << "\n";
 	return *this;
 }
 Network& Network::fixedPointShort(std::string strState) {
@@ -217,13 +244,15 @@ void Network::basins(const char *fileName) {
 	int networkSize = this->numProteins();
 	map<string, int> basins;
 	map<string, string> edges;
+	map<string, int> edgeCount;
 	ofstream os;
 	os.open(fileName);
-	os << "digraph " << "G" << " {\nnode[shape=point];" << endl
-			<< "concentrate=true;\n"/* << "edge[arrowhead=\"none\"];\n"*/;
+	os << "digraph " << "G" << " {\nnode[shape=point, rank=same];" << endl
+			<< "edge[color=gray];\n"/* << "edge[arrowhead=\"none\"];\n"*/;
 
 	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
-		this->fixedPointShort(edges, this->binStr(i));
+//		this->fixedPointShort(edges, this->binStr(i));
+		this->fixedPoint(edges, edgeCount, this->binStr(i));
 		if (basins.count(this->state()) <= 0) {
 			basins.insert(pair<string, int>(this->state(), 1));
 		} else {
@@ -233,7 +262,11 @@ void Network::basins(const char *fileName) {
 	}
 	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
 			it++) {
-		os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
+		os << "\"" << it->first << "\" -> \"" << it->second << "\" " ;
+		if (edgeCount.at(it->first) > 3) {
+			os<< "[penwidth="<< log(edgeCount.at(it->first)) << ", color=blue]";
+		}
+		os << ";\n";
 	}
 	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
 			it++) {
@@ -244,7 +277,7 @@ void Network::basins(const char *fileName) {
 	os.close();
 }
 void Network::basins() {
-    this->basins("basins.gv");
+	this->basins("basins.gv");
 //	int networkSize = this->numProteins();
 //	map<string, int> basins;
 //	map<string, string> edges;
