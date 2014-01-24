@@ -39,19 +39,18 @@ public:
 	std::string state() const; //getter of Network state
 	int numProteins();
 	int sum(std::set<std::string> regulators);
-	int sum(std::set<std::string> posRegulators,
-			std::set<std::string> negRegulators);
-	Protein& find(std::string protein);
+	int sum(std::set<std::string> posRegulators, std::set<std::string> negRegulators);
+    Protein& find(std::string protein);
 	void print();
 	void graph();
 	void graph(const char *fileName);
 	void basins();
-	void basins(const char *fileName);
+    void basins(const char *fileName);
 
-	std::string binStr(unsigned n, int length);
+    std::string binStr(unsigned n, int length);
 	std::string binStr(unsigned n);
-	const char* createGV(int count);
-	const char* createGV(std::string s);
+    const char* createGV(int count);
+    const char* createGV(std::string s);
 
 	friend std::ostream& operator<<(std::ostream& os, const Network& proteins);
 	friend std::ofstream& operator<<(std::ofstream& ofs,

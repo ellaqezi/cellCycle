@@ -88,7 +88,7 @@ Network& Network::updateStates() {
 	this->setStates(newState);
 	return *this;
 }
-Network& Network::fixedPoint(std::string strState) {
+Network& Network::fixedPoint(string strState) {
 	int fpCount = 0;
 	cout << "\n" << fpCount << "\t" << *this << " setting state to: "
 			<< strState << "\n"; //stepwise
@@ -101,14 +101,15 @@ Network& Network::fixedPoint(std::string strState) {
 		prevNetState = this->state();
 		fpCount++;
 		cout << fpCount << "\t" << *this;
-        this->graph(this->createGV(fpCount));
+		this->graph(this->createGV(fpCount));
 		this->updateStates(); //stepwise
 	}
 	cout << "\t<<Stationary @ " << fpCount << " " << this->state() << "\n";
 	return *this;
 }
 
-Network& Network::fixedPoint(std::map<std::string, std::string> &edges, std::map<std::string, int> &edgeCount, std::string strState) {
+Network& Network::fixedPoint(map<string, string> &edges,
+		map<string, int> &edgeCount, string strState) {
 	int fpCount = 0;
 //	cout << "\n" << fpCount << "\t" << *this << " setting state to: "
 //			<< strState << "\n"; //stepwise
@@ -134,7 +135,7 @@ Network& Network::fixedPoint(std::map<std::string, std::string> &edges, std::map
 //	cout << "\t<<Stationary @ " << fpCount << " " << this->state() << "\n";
 	return *this;
 }
-Network& Network::fixedPointShort(std::string strState) {
+Network& Network::fixedPointShort(string strState) {
 	ofstream os;
 	os.open("fps.gv");
 	os << "digraph " << strState << " {\n";
@@ -143,7 +144,7 @@ Network& Network::fixedPointShort(std::string strState) {
 	os.close();
 	return *this;
 }
-Network& Network::fixedPointShort(ofstream& ofs, std::string strState) {
+Network& Network::fixedPointShort(ofstream& ofs, string strState) {
 	int fpsCount = 0;
 //	cout << strState; //initial << stationary
 
@@ -163,8 +164,7 @@ Network& Network::fixedPointShort(ofstream& ofs, std::string strState) {
 //	cout << "\t<<Stationary @ " << fpsCount << "\t" << this->state();
 	return *this;
 }
-Network& Network::fixedPointShort(map<string, string> &map,
-		std::string strState) {
+Network& Network::fixedPointShort(map<string, string> &map, string strState) {
 	int fpsCount = 0;
 //	cout << strState; //initial << stationary
 
@@ -215,7 +215,7 @@ int Network::sum(set<string> posRegulators, set<string> negRegulators) {
 	int sumOfStates = sum(posRegulators) - sum(negRegulators);
 	return sumOfStates;
 }
-Protein& Network::find(std::string protein) {
+Protein& Network::find(string protein) {
 	Protein *p;
 	for (vector<Protein*>::iterator it = _proteins->begin();
 			it != _proteins->end(); it++) {
@@ -247,8 +247,7 @@ void Network::basins(const char *fileName) {
 	map<string, int> edgeCount;
 	ofstream os;
 	os.open(fileName);
-	os << "digraph " << "G" << " {\nnode[shape=point, rank=same];" << endl
-			<< "edge[color=gray];\n"/* << "edge[arrowhead=\"none\"];\n"*/;
+	os << "digraph " << "G" << " {" << endl;
 
 	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
 //		this->fixedPointShort(edges, this->binStr(i));
@@ -260,24 +259,38 @@ void Network::basins(const char *fileName) {
 		}
 		//		cout << endl;
 	}
-	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
-			it++) {
-		os << "\"" << it->first << "\" -> \"" << it->second << "\" " ;
-		if (edgeCount.at(it->first) > 3) {
-			os<< "[penwidth="<< log(edgeCount.at(it->first)) << ", color=blue]";
-		}
-		os << ";\n";
-	}
+	//basins with labels
+	os << "node[shape=box];\n";
 	for (map<string, int>::iterator it = basins.begin(); it != basins.end();
 			it++) {
 		cout << it->first << " >> " << it->second << endl;
-		os << "\"" << it->first << "\" [shape=box];\n";
+		os << "\"" << it->first << "\" ;\n";
+	}
+	//edges that occur > 3 times
+	os
+			<< "node[shape=point, color=dodgerblue2, label=\"\", width=0.15, style=filled];\nedge[color=blue];\n";
+	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
+			it++) {
+		if (edgeCount.at(it->first) > 3) {
+			os << "\"" << it->first << "\" -> \"" << it->second << "\" "
+					<< "[penwidth=" << log(edgeCount.at(it->first)) << "];\n";
+		}
+//		os << ";\n";
+	}
+	//edges that occur <= 3 times
+	os << "node[color=gray25, width=0.05];\nedge[color=gray50];\n";
+	for (map<string, string>::iterator it = edges.begin(); it != edges.end();
+			it++) {
+		if (edgeCount.at(it->first) <= 3) {
+			os << "\"" << it->first << "\" -> \"" << it->second << "\";\n";
+		}
+//		os << ";\n";
 	}
 	os << "\n}";
 	os.close();
 }
 void Network::basins() {
-    this->basins("basins.gv");
+	this->basins("basins.gv");
 }
 
 string Network::binStr(unsigned n, int length) {
@@ -318,11 +331,11 @@ const char* Network::createGV(string s) {
 	return name.c_str();
 }
 
-ostream& operator<<(std::ostream& os, const Network& network) {
+ostream& operator<<(ostream& os, const Network& network) {
 	os << network.state() << endl;
 	return os;
 }
-ofstream& operator<<(std::ofstream& ofs, const Network& network) {
+ofstream& operator<<(ofstream& ofs, const Network& network) {
 	ofs << "digraph " << network.state() << "  {\n";
 	for (vector<Protein*>::iterator it = network._proteins->begin();
 			it != network._proteins->end(); it++) {
