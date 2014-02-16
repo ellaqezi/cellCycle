@@ -16,9 +16,9 @@ Protein::Protein() {
 }
 Protein::Protein(string name) :
 		_name(name) {
-            _activatedBy = new set<string>;
-            _deactivatedBy = new set<string>;
-            _negRegulated = false;
+	_activatedBy = new set<string>;
+	_deactivatedBy = new set<string>;
+	_negRegulated = false;
 }
 Protein::Protein(string name, int state, set<string> *activatedBy,
 		set<string> *deactivatedBy) :
@@ -27,14 +27,18 @@ Protein::Protein(string name, int state, set<string> *activatedBy,
 	this->negRegulated();
 }
 Protein::Protein(const Protein &protein) :
-		_name(protein._name), _state(protein._state), _negRegulated(protein._negRegulated) {
-            _activatedBy = new set<string>(*protein._activatedBy);
-            _deactivatedBy = new set<string>(*protein._deactivatedBy);
-        }
+		_name(protein._name), _state(protein._state), _negRegulated(
+				protein._negRegulated) {
+	_activatedBy = new set<string>(*protein._activatedBy);
+	_deactivatedBy = new set<string>(*protein._deactivatedBy);
+}
 Protein::Protein(Protein* protein) :
-_name(protein->_name), _state(protein->_state),  _negRegulated(                                                                                                                          protein->_negRegulated) {
-    _activatedBy = new set<string>(protein->_activatedBy->begin(), protein->_activatedBy->end());
-    _deactivatedBy = new set<string>(protein->_deactivatedBy->begin(), protein->_deactivatedBy->end());
+		_name(protein->_name), _state(protein->_state), _negRegulated(
+				protein->_negRegulated) {
+	_activatedBy = new set<string>(protein->_activatedBy->begin(),
+			protein->_activatedBy->end());
+	_deactivatedBy = new set<string>(protein->_deactivatedBy->begin(),
+			protein->_deactivatedBy->end());
 }
 Protein::~Protein() {
 }
@@ -77,6 +81,14 @@ Protein& Protein::state(int activatedBy, int deactivatedBy) {
 	this->state(sumOfStates);
 	return *this;
 }
+Protein& Protein::expLevel(float sumOfStates) {
+	_expLevel += sumOfStates;
+	return *this;
+}
+Protein& Protein::setExpLevel(float expLevel) {
+	_expLevel = expLevel;
+	return *this;
+}
 Protein& Protein::activatedBy(Protein &regulator) {
 	_activatedBy->insert(_activatedBy->end(), regulator.name());
 	return *this;
@@ -95,8 +107,8 @@ Protein& Protein::negRegulated(bool onOff) {
 }
 Protein& Protein::reset() {
 	this->state(0);
-    _activatedBy = new set<string>;
-    _deactivatedBy = new set<string>;
+	_activatedBy = new set<string>;
+	_deactivatedBy = new set<string>;
 	return *this;
 }
 void Protein::negRegulated() {
@@ -115,6 +127,9 @@ int Protein::state() {
 int Protein::prev() {
 	return _prev;
 }
+float Protein::expLevel() {
+	return _expLevel;
+}
 set<string> Protein::activatedBy() {
 	return *_activatedBy;
 }
@@ -131,7 +146,7 @@ Protein& Protein::operator =(const Protein& protein) {
 	return *this;
 }
 Protein* Protein::operator =(Protein &protein) {
-    *this = protein;
+	*this = protein;
 	return this;
 }
 bool Protein::operator <(const Protein& protein) const {
@@ -156,16 +171,18 @@ ostream& operator<<(std::ostream& os, set<string> *proteins) {
 	return os;
 }
 ostream& operator<<(std::ostream& os, const Protein& protein) {
-	os << protein._prev << protein._state << "\t"/*<< "\n"*/<< protein._name
-			<< " \t+ " << protein._activatedBy << "\t- "
+	os << protein._prev << protein._state << "\t" << protein._expLevel << "\t\t"
+			<< protein._name << " \t+ " << protein._activatedBy << "\t- "
 			<< protein._deactivatedBy << endl;
 	return os;
 }
 ofstream& operator<<(std::ofstream& ofs, const Protein& protein) {
 	if (protein._state == 1) {
-		ofs << "\"" << protein._name << "\" [shape=box, color=green, style=filled];\n";
+		ofs << "\"" << protein._name
+				<< "\" [shape=box, color=green, style=filled];\n";
 	} else {
-		ofs << "\"" << protein._name << "\" [shape=box, color=gray, style=filled];\n";
+		ofs << "\"" << protein._name
+				<< "\" [shape=box, color=gray, style=filled];\n";
 	}
 	if (!protein._negRegulated) {
 		ofs << "\tedge [color=yellow]; \n";

@@ -20,23 +20,27 @@ public:
 	Protein(std::string name, int state, std::set<std::string> *activatedBy,
 			std::set<std::string> *deactivatedBy);
 	Protein(const Protein &protein); // copy constructor
-    Protein(Protein*);
+	Protein(Protein*);
 	virtual ~Protein();
 
 	//service methods
 	virtual int sum(std::set<std::string> regulators) {
 		return 0;
-	};
+	}
+	;
 	virtual int sum(std::set<std::string> posRegulators,
 			std::set<std::string> negRegulators) {
 		return 0;
-	};
+	}
+	;
 	void selfDegrade(bool negRegulated);
 
 	//setters
 	Protein& name(std::string name);
 	Protein& state(int state);
 	Protein& state(int activatedBy, int deactivatedBy);
+	Protein& expLevel(float sumOfStates);
+	Protein& setExpLevel(float sumOfStates);
 	Protein& activatedBy(Protein &regulator);
 	Protein& deactivatedBy(Protein &regulator);
 	Protein& negRegulated(bool onOff);
@@ -47,11 +51,12 @@ public:
 	std::string name();
 	int state();
 	int prev();
+	float expLevel();
 	std::set<std::string> activatedBy();
 	std::set<std::string> deactivatedBy();
 
 	Protein& operator =(const Protein& protein);
-    Protein* operator =(Protein& p);
+	Protein* operator =(Protein& p);
 
 	bool operator <(const Protein& protein) const;
 	friend std::ostream& operator<<(std::ostream& os,
@@ -63,6 +68,7 @@ public:
 private:
 	std::string _name;
 	int _state = 0, _prev = 0;
+	float _expLevel = 0;
 	std::set<std::string> *_activatedBy;
 	std::set<std::string> *_deactivatedBy;
 	bool _negRegulated = false;
