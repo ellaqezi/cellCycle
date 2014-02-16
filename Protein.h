@@ -41,6 +41,7 @@ public:
 	Protein& state(int activatedBy, int deactivatedBy);
 	Protein& expLevel(float sumOfStates);
 	Protein& setExpLevel(float sumOfStates);
+
 	Protein& activatedBy(Protein &regulator);
 	Protein& deactivatedBy(Protein &regulator);
 	Protein& negRegulated(bool onOff);

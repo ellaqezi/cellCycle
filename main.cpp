@@ -53,7 +53,7 @@ int main(int argc, const char * argv[]) {
 
 //	n.print();
 //	cout << "\nTemporal Evolution";
-	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
+//	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
 //	n.fixedPointShort("10001000100");
 //	n.fixedPoint(n.binStr(1092));
 	n.print();
@@ -70,6 +70,7 @@ int main(int argc, const char * argv[]) {
 //	r.addProtein(new Protein("blah"));
 	r.randomise();
 	r.basins(r.createGV("randomBasins"));
+
 	r.print();
 //	r.fixedPointShort(r.binStr(1092));
 	r.graph(r.createGV("random"));
