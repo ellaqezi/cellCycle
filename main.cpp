@@ -51,9 +51,9 @@ int main(int argc, const char * argv[]) {
 			e).addProtein(d).addProtein(i).addProtein(a).addProtein(b).addProtein(
 			c).addProtein(d).addProtein(e).addProtein(b);
 
-	n.print();
+//	n.print();
 //	cout << "\nTemporal Evolution";
-	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
+//	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
 //	n.fixedPointShort("10001000100");
 //	n.fixedPoint(n.binStr(1092));
 //	n.print();
@@ -63,13 +63,14 @@ int main(int argc, const char * argv[]) {
 
 //	cout << "\nFixed points and basin sizes\n";
 	n.basins();
+	n.print();
 
     cout << endl;
 	RandomNetwork r(n);
 //	r.addProtein(new Protein("blah"));
 	r.randomise();
+	r.basins(r.createGV("random"));
 	r.print();
-//	r.basins(r.createGV("random"));
 //	r.fixedPointShort(r.binStr(1092));
 	r.graph();
 	return 0;

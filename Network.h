@@ -29,12 +29,15 @@ public:
 	Network& setStates(std::string binState);
 	Network& reset();
 	Network& updateStates();
-	Network& fixedPoint(std::string strState);
+
+	Network& fixedPoint(std::string strState, bool drawGraph=false);
 	Network& fixedPoint(std::map<std::string, std::string> &edges, std::map<std::string, int> &edgeCount, std::string strState);
-	Network& fixedPointShort(std::string strState);
-	Network& fixedPointShort(std::ofstream &ofs, std::string strState);
+
+//	Network& fixedPointShort(std::string strState);
+//	Network& fixedPointShort(std::ofstream &ofs, std::string strState);
 	Network& fixedPointShort(std::map<std::string, std::string> &edges,
 			std::string strState);
+
 	Network& operator=(const Network& network);
 	std::string state() const; //getter of Network state
 	int numProteins();
