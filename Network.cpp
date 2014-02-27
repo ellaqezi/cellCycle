@@ -243,17 +243,13 @@ void Network::print() {
 		cout << (**it);
 	}
 }
-//void Network::printCSV(const char *fileName) {
-//	ofstream csv;
-//	csv.open(fileName);
-//	ostream os;
-//	for (vector<Protein*>::iterator it = this->_proteins->begin();
-//			it != this->_proteins->end(); it++) {
-//		os << (**it);
-//	}
-//	csv << os;
-//	csv.close();
-//}
+ostream& Network::print(ostream& os) {
+	for (vector<Protein*>::iterator it = this->_proteins->begin();
+			it != this->_proteins->end(); it++) {
+		os << (**it);
+	}
+	return os;
+}
 void Network::graph(const char *fileName) {
 	ofstream gdot;
 	gdot.open(fileName);
@@ -263,13 +259,13 @@ void Network::graph(const char *fileName) {
 void Network::graph() {
 	this->graph("graph.gv");
 }
-void Network::basins(const char *fileName) {
+ostream& Network::basins(const char *fileName, ostream& os) {
 	int networkSize = this->numProteins();
 	map<string, map<string, string> *> basins;
 	map<string, int> edgeCount;
-	ofstream os;
-	os.open(fileName);
-	os << "digraph " << "G" << " {" << endl
+	ofstream ofs;
+	ofs.open(fileName);
+	ofs << "digraph " << "G" << " {" << endl
 			<< "layers=\"basins:edges:singles\";\n";
 
 	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
@@ -286,20 +282,20 @@ void Network::basins(const char *fileName) {
 	//attractors with labels
 	for (map<string, map<string, string>*>::iterator it = basins.begin();
 			it != basins.end(); it++) {
-		cout << it->first << "\t" << it->second->size() + 1 << endl;
-		os
+		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
+		ofs
 				<< "subgraph {\nnode[shape=box, style=unfilled, layer=\"basins\"];\n";
-		os << "\"" << it->first << "\" ;\n";
+		ofs << "\"" << it->first << "\" ;\n";
 		//edges that occur > 3 times
-		os
+		ofs
 				<< "node[shape=point, layer=\"edges\", color=dodgerblue2, width=0.15, style=filled];\nedge[color=blue];\n";
 		ostringstream o;
 		for (map<string, string>::iterator itm = it->second->begin();
 				itm != it->second->end(); itm++) {
 			if (edgeCount.at(itm->first) > 3) {
-				os << "\"" << itm->second << "\" [width="
+				ofs << "\"" << itm->second << "\" [width="
 						<< log(edgeCount.at(itm->second)) / 15 << "];\n";
-				os << "\"" << itm->first << "\" -> \"" << itm->second << "\" "
+				ofs << "\"" << itm->first << "\" -> \"" << itm->second << "\" "
 						<< "[penwidth=" << log(edgeCount.at(itm->first)) * 2
 						<</* ", len="<< log(edgeCount.at(itm->first)) <<*/"];\n";
 			} else {
@@ -307,12 +303,12 @@ void Network::basins(const char *fileName) {
 			}
 		}
 		//edges that occur <= 3 times
-		os
+		ofs
 				<< "node[layer=\"singles\", color=gray25, width=0.05];\nedge[color=gray50, len=1];\n";
-		os << o.str() << "}\n";
+		ofs << o.str() << "}\n";
 	}
-	os << "}";
-	os.close();
+	ofs << "}";
+	ofs.close();
 
 	//graph according to time series expression levels
 	float meanExpLevel = 0;
@@ -332,9 +328,10 @@ void Network::basins(const char *fileName) {
 	string tsGraph("timeSeries");
 	tsGraph.append(fileName);
 	this->graph(this->createGV(tsGraph));
+	return os;
 }
 void Network::basins() {
-	this->basins(this->createGV("basins"));
+	this->basins(this->createGV("basins"), cout);
 }
 string Network::binStr(unsigned n, int length) {
 	if (n >= pow(2, length)) {

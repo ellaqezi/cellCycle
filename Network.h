@@ -45,11 +45,11 @@ public:
 	int sum(std::set<std::string> posRegulators, std::set<std::string> negRegulators);
     Protein& find(std::string protein);
 	void print();
-//	void printCSV(const char *fileName);
+	std::ostream& print(std::ostream& os);
 	void graph();
 	void graph(const char *fileName);
 	void basins();
-    void basins(const char *fileName);
+    std::ostream& basins(const char *fileName, std::ostream& os);
 
     std::string binStr(unsigned n, int length);
 	std::string binStr(unsigned n);
