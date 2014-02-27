@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 #ifndef RANDOMNETWORK_H_
@@ -19,6 +20,7 @@ class RandomNetwork: public Network {
 public:
 	RandomNetwork();
 	RandomNetwork(Network const &network);
+	RandomNetwork(int size);
 	virtual ~RandomNetwork();
     
 	RandomNetwork& randomise();

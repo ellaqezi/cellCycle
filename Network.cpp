@@ -243,6 +243,17 @@ void Network::print() {
 		cout << (**it);
 	}
 }
+//void Network::printCSV(const char *fileName) {
+//	ofstream csv;
+//	csv.open(fileName);
+//	ostream os;
+//	for (vector<Protein*>::iterator it = this->_proteins->begin();
+//			it != this->_proteins->end(); it++) {
+//		os << (**it);
+//	}
+//	csv << os;
+//	csv.close();
+//}
 void Network::graph(const char *fileName) {
 	ofstream gdot;
 	gdot.open(fileName);
@@ -275,7 +286,7 @@ void Network::basins(const char *fileName) {
 	//attractors with labels
 	for (map<string, map<string, string>*>::iterator it = basins.begin();
 			it != basins.end(); it++) {
-		cout << it->first << " >> " << it->second->size() + 1 << endl;
+		cout << it->first << "\t" << it->second->size() + 1 << endl;
 		os
 				<< "subgraph {\nnode[shape=box, style=unfilled, layer=\"basins\"];\n";
 		os << "\"" << it->first << "\" ;\n";
@@ -295,6 +306,7 @@ void Network::basins(const char *fileName) {
 				o << "\"" << itm->first << "\" -> \"" << itm->second << "\";\n";
 			}
 		}
+		//edges that occur <= 3 times
 		os
 				<< "node[layer=\"singles\", color=gray25, width=0.05];\nedge[color=gray50, len=1];\n";
 		os << o.str() << "}\n";
@@ -303,10 +315,15 @@ void Network::basins(const char *fileName) {
 	os.close();
 
 	//graph according to time series expression levels
-//	this->reset();
+	float meanExpLevel = 0;
+	for (vector<Protein*>::iterator it = this->_proteins->begin();
+					it != this->_proteins->end(); it++) {
+		meanExpLevel += (**it).expLevel();
+	}
+	meanExpLevel /= this->_proteins->size();
 	for (vector<Protein*>::iterator it = this->_proteins->begin();
 				it != this->_proteins->end(); it++) {
-		if ((**it).expLevel() > 1) {
+		if ((**it).expLevel() > meanExpLevel) {
 			(**it).state(1);
 		} else {
 			(**it).state(-1);

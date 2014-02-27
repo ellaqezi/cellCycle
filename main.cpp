@@ -65,15 +65,21 @@ int main(int argc, const char * argv[]) {
 	n.basins();
 	n.print();
 
-    cout << endl;
-	RandomNetwork r(n);
-//	r.addProtein(new Protein("blah"));
-	r.randomise();
-	r.basins(r.createGV("randomBasins"));
+	cout << endl;
+	ofstream csv("random.csv");
+	std::streambuf * old = cout.rdbuf(csv.rdbuf());
+	for (int i = 0; i < 20; i++) {
+		RandomNetwork r(n);
+		r.basins(r.createGV("randomBasins"));
+		r.print();
+		//	r.fixedPointShort(r.binStr(1092));
+		//		r.graph(r.createGV("random"));
+	}
+	cout.rdbuf(old);
 
-	r.print();
-//	r.fixedPointShort(r.binStr(1092));
-	r.graph(r.createGV("random"));
+	RandomNetwork r2(11);
+	r2.print();
+
 	return 0;
 }
 

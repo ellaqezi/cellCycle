@@ -45,6 +45,7 @@ public:
 	int sum(std::set<std::string> posRegulators, std::set<std::string> negRegulators);
     Protein& find(std::string protein);
 	void print();
+//	void printCSV(const char *fileName);
 	void graph();
 	void graph(const char *fileName);
 	void basins();
