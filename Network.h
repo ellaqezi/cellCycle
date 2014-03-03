@@ -49,6 +49,7 @@ public:
 	void graph();
 	void graph(const char *fileName);
 	void basins();
+	std::ostream& basins(std::ostream& os);
     std::ostream& basins(const char *fileName, std::ostream& os);
 
     std::string binStr(unsigned n, int length);

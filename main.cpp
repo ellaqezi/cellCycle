@@ -56,7 +56,7 @@ int main(int argc, const char * argv[]) {
 //	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
 //	n.fixedPointShort("10001000100");
 //	n.fixedPoint(n.binStr(1092));
-	n.print();
+//	n.print();
 //	n.reset();
 //	n.setStates("00001000100");
 //	n.graph();
@@ -66,20 +66,26 @@ int main(int argc, const char * argv[]) {
 	n.print();
 
 	cout << endl;
-	ofstream csv("random50.csv");
+	ofstream csv("random100.csv");
+	ofstream txt("random100.txt");
 	std::streambuf * buf = csv.rdbuf();
+	std::streambuf * buf0 = txt.rdbuf();
 	ostream out(buf);
-	for (int i = 0; i < 50; i++) {
+	ostream tout(buf0);
+
+	for (int i = 0; i < 100; i++) {
 		RandomNetwork r(n);
-		r.basins(r.createGV("randomBasins"), cout);
+		r.basins(tout);
+		tout << endl << i;
+		cout << i;
 		r.print(out);
 		//	r.fixedPointShort(r.binStr(1092));
 		//		r.graph(r.createGV("random"));
 	}
 
-//	RandomNetwork r2(11);
-//	r2.basins();
-//	r2.print();
+//	RandomNetwork r2(10);
+//	r2.basins(cout);
+//	r2.print(cout);
 
 	return 0;
 }
