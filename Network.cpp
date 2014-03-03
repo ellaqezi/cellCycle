@@ -350,10 +350,9 @@ ostream& Network::basins(ostream& os) {
 	for (map<string, map<string, string>*>::iterator it = basins.begin();
 			it != basins.end(); it++) {
 		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
-		//edges that occur <= 3 times
 	}
 
-	//graph according to time series expression levels
+	//set state according to time series expression levels
 	float meanExpLevel = 0;
 	for (vector<Protein*>::iterator it = this->_proteins->begin();
 					it != this->_proteins->end(); it++) {
@@ -368,9 +367,6 @@ ostream& Network::basins(ostream& os) {
 			(**it).state(-1);
 		}
 	}
-//	string tsGraph("timeSeries");
-//	tsGraph.append(fileName);
-//	this->graph(this->createGV(tsGraph));
 	return os;
 }
 void Network::basins() {
