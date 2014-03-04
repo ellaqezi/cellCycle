@@ -66,14 +66,15 @@ int main(int argc, const char * argv[]) {
 	n.print();
 
 	cout << endl;
-	ofstream csv("random100.csv");
-	ofstream txt("random100.txt");
-	std::streambuf * buf = csv.rdbuf();
-	std::streambuf * buf0 = txt.rdbuf();
-	ostream out(buf);
-	ostream tout(buf0);
+	ofstream csv("random50.csv");
+	ofstream txt("random50.txt");
 
-	for (int i = 0; i < 100; i++) {
+
+	for (int i = 0; i < 50; i++) {
+        std::streambuf * bufc = csv.rdbuf();
+        std::streambuf * buft = txt.rdbuf();
+        ostream out(bufc);
+        ostream tout(buft);
 		RandomNetwork r(n);
 		r.basins(tout);
 		tout << endl << i;
@@ -82,6 +83,8 @@ int main(int argc, const char * argv[]) {
 		//	r.fixedPointShort(r.binStr(1092));
 		//		r.graph(r.createGV("random"));
 	}
+    csv.close();
+    txt.close();
 
 //	RandomNetwork r2(10);
 //	r2.basins(cout);

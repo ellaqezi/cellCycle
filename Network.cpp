@@ -259,27 +259,40 @@ void Network::graph(const char *fileName) {
 void Network::graph() {
 	this->graph("graph.gv");
 }
-ostream& Network::basins(const char *fileName, ostream& os) {
-	int networkSize = this->numProteins();
-	map<string, map<string, string> *> basins;
-	map<string, int> edgeCount;
-	ofstream ofs;
-	ofs.open(fileName);
-	ofs << "digraph " << "G" << " {" << endl
-			<< "layers=\"basins:edges:singles\";\n";
-
-	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
+void Network::findAttractors(map<string, map<string, string> *> basins, map<string, int> edgeCount) {
+    int networkSize = this->numProteins();
+    for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
 		map<string, string>* edges;
 		edges = new map<string, string>;
 		this->fixedPoint(*edges, edgeCount, this->binStr(i));
 		if (basins.count(this->state()) <= 0) {
 			basins.insert(
-					pair<string, map<string, string>*>(this->state(), edges));
+                          pair<string, map<string, string>*>(this->state(), edges));
 		} else {
 			basins.at(this->state())->insert(edges->begin(), edges->end());
 		}
 	}
-	//attractors with labels
+}
+void Network::printAttractors(map<string, map<string, string> *> basins, std::ostream &os) {
+    for (map<string, map<string, string>*>::iterator it = basins.begin();
+         it != basins.end(); it++) {
+		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
+	}
+}
+ostream& Network::basins(const char *fileName, ostream& os) {
+	map<string, map<string, string> *> basins;
+	map<string, int> edgeCount;
+
+    //determine fixed point basin size
+	findAttractors(basins, edgeCount);
+	
+    //graph basins
+    ofstream ofs;
+	ofs.open(fileName);
+	ofs << "digraph " << "G" << " {" << endl
+    << "layers=\"basins:edges:singles\";\n";
+    
+    //attractors with labels
 	for (map<string, map<string, string>*>::iterator it = basins.begin();
 			it != basins.end(); it++) {
 		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
@@ -335,22 +348,13 @@ ostream& Network::basins(ostream& os) {
 	map<string, map<string, string> *> basins;
 	map<string, int> edgeCount;
 
-	for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
-		map<string, string>* edges;
-		edges = new map<string, string>;
-		this->fixedPoint(*edges, edgeCount, this->binStr(i));
-		if (basins.count(this->state()) <= 0) {
-			basins.insert(
-					pair<string, map<string, string>*>(this->state(), edges));
-		} else {
-			basins.at(this->state())->insert(edges->begin(), edges->end());
-		}
-	}
+    //determine fixed point basin size
+	findAttractors(basins, edgeCount);
+    
 	//attractors with labels
 	for (map<string, map<string, string>*>::iterator it = basins.begin();
 			it != basins.end(); it++) {
 		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
-		//edges that occur <= 3 times
 	}
 
 	//graph according to time series expression levels
