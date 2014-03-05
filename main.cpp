@@ -64,31 +64,32 @@ int main(int argc, const char * argv[]) {
 //	cout << "\nFixed points and basin sizes\n";
 	n.basins();
 	n.print();
+//
+//	cout << endl;
+//	ofstream csv("random50.csv");
+//	ofstream txt("random50.txt");
+//
+//
+//	for (int i = 0; i < 50; i++) {
+//        std::streambuf * bufc = csv.rdbuf();
+//        std::streambuf * buft = txt.rdbuf();
+//        ostream out(bufc);
+//        ostream tout(buft);
+//		RandomNetwork r(n);
+//		r.basins(tout);
+//		tout << endl << i;
+//		cout << i;
+//		r.print(out);
+//		//	r.fixedPointShort(r.binStr(1092));
+//		//		r.graph(r.createGV("random"));
+//	}
+//    csv.close();
+//    txt.close();
 
-	cout << endl;
-	ofstream csv("random50.csv");
-	ofstream txt("random50.txt");
-
-
-	for (int i = 0; i < 50; i++) {
-        std::streambuf * bufc = csv.rdbuf();
-        std::streambuf * buft = txt.rdbuf();
-        ostream out(bufc);
-        ostream tout(buft);
-		RandomNetwork r(n);
-		r.basins(tout);
-		tout << endl << i;
-		cout << i;
-		r.print(out);
-		//	r.fixedPointShort(r.binStr(1092));
-		//		r.graph(r.createGV("random"));
-	}
-    csv.close();
-    txt.close();
-
-//	RandomNetwork r2(10);
-//	r2.basins(cout);
-//	r2.print(cout);
+    cout<< endl;
+	RandomNetwork r2(n);
+	r2.basins(cout);
+	r2.print(cout);
 
 	return 0;
 }

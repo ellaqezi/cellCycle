@@ -39,8 +39,10 @@ public:
 	Protein& name(std::string name);
 	Protein& state(int state);
 	Protein& state(int activatedBy, int deactivatedBy);
-	Protein& expLevel(float sumOfStates);
-	Protein& setExpLevel(float sumOfStates);
+	Protein& tsLevel(float sumOfStates);
+	Protein& setTSLevel(float sumOfStates);
+    Protein& abLevel(float sumOfStates);
+	Protein& setABLevel(float sumOfStates);
 
 	Protein& activatedBy(Protein &regulator);
 	Protein& deactivatedBy(Protein &regulator);
@@ -52,7 +54,8 @@ public:
 	std::string name();
 	int state();
 	int prev();
-	float expLevel();
+	float tsLevel();
+    float abLevel();
 	std::set<std::string> activatedBy();
 	std::set<std::string> deactivatedBy();
 
@@ -69,7 +72,7 @@ public:
 private:
 	std::string _name;
 	int _state = 0, _prev = 0;
-	float _expLevel = 0;
+	float _tsLevel = 0, _abLevel = 0;
 	std::set<std::string> *_activatedBy;
 	std::set<std::string> *_deactivatedBy;
 	bool _negRegulated = false;

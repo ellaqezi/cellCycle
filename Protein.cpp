@@ -81,12 +81,20 @@ Protein& Protein::state(int activatedBy, int deactivatedBy) {
 	this->state(sumOfStates);
 	return *this;
 }
-Protein& Protein::expLevel(float sumOfStates) {
-	_expLevel += sumOfStates;
+Protein& Protein::tsLevel(float sumOfStates) {
+	_tsLevel += sumOfStates;
 	return *this;
 }
-Protein& Protein::setExpLevel(float expLevel) {
-	_expLevel = expLevel;
+Protein& Protein::setTSLevel(float expLevel) {
+	_tsLevel = expLevel;
+	return *this;
+}
+Protein& Protein::abLevel(float sumOfStates) {
+	_abLevel += sumOfStates;
+	return *this;
+}
+Protein& Protein::setABLevel(float expLevel) {
+	_abLevel = expLevel;
 	return *this;
 }
 Protein& Protein::activatedBy(Protein &regulator) {
@@ -127,8 +135,11 @@ int Protein::state() {
 int Protein::prev() {
 	return _prev;
 }
-float Protein::expLevel() {
-	return _expLevel;
+float Protein::tsLevel() {
+	return _tsLevel;
+}
+float Protein::abLevel() {
+	return _abLevel;
 }
 set<string> Protein::activatedBy() {
 	return *_activatedBy;
@@ -171,7 +182,7 @@ ostream& operator<<(std::ostream& os, set<string> *proteins) {
 	return os;
 }
 ostream& operator<<(std::ostream& os, const Protein& protein) {
-	os << protein._prev << protein._state << "\t" << protein._expLevel << "\t\t"
+	os << protein._prev << protein._state << "\t" << protein._abLevel << "\t" << protein._tsLevel << "\t\t"
 			<< protein._name << " \t+ " << protein._activatedBy << "\t- "
 			<< protein._deactivatedBy << endl;
 	return os;

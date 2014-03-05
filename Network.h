@@ -48,9 +48,12 @@ public:
 	std::ostream& print(std::ostream& os);
 	void graph();
 	void graph(const char *fileName);
-    void findAttractors(std::map<std::string, std::map<std::string, std::string> *> basins, std::map<std::string, int> edgeCount);
+    void graphBasins(const char *fileName,std::map<std::string, std::map<std::string, std::string> *> basins, std::map<std::string, int> edgeCount);
+    void findAttractors(std::map<std::string, std::map<std::string, std::string> *>& basins, std::map<std::string, int> &edgeCount);
     void printAttractors(std::map<std::string, std::map<std::string, std::string> *> basins, std::ostream& os);
-	void basins();
+	void setStateTS();
+    void setStateAB(std::map<std::string, std::map<std::string, std::string> *> basins);
+    void basins();
 	std::ostream& basins(std::ostream& os);
     std::ostream& basins(const char *fileName, std::ostream& os);
 

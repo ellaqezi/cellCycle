@@ -118,7 +118,7 @@ Network& Network::fixedPoint(map<string, string> &edges,
 	for (vector<Protein*>::iterator it = _proteins->begin();
 			it != _proteins->end(); it++) {
 		prevGeneExpLevels.insert(
-				pair<string, int>((**it).name(), (**it).expLevel()));
+				pair<string, int>((**it).name(), (**it).tsLevel()));
 	}
 
 	this->reset();
@@ -127,7 +127,7 @@ Network& Network::fixedPoint(map<string, string> &edges,
 	while (prevNetState != this->state()) {
 		prevNetState = this->state();
 		for (vector<Protein*>::iterator pit = _proteins->begin(); pit != _proteins->end(); pit++) {
-			(**pit).expLevel((**pit).state());
+			(**pit).tsLevel((**pit).state());
 		}
 		fpCount++;
 		if (edgeCount.count(this->state()) > 0) {
@@ -143,7 +143,7 @@ Network& Network::fixedPoint(map<string, string> &edges,
 	}
 	for (vector<Protein*>::iterator it = _proteins->begin();
 			it != _proteins->end(); it++) {
-		(**it).setExpLevel(((**it).expLevel() - prevGeneExpLevels.at((**it).name()))/fpCount + prevGeneExpLevels.at((**it).name()));
+		(**it).setTSLevel(((**it).tsLevel() - prevGeneExpLevels.at((**it).name()))/fpCount + prevGeneExpLevels.at((**it).name()));
 	}
 
 //	cout << "\t<<Stationary @ " << fpCount << " " << this->state() << "\n";
@@ -259,7 +259,45 @@ void Network::graph(const char *fileName) {
 void Network::graph() {
 	this->graph("graph.gv");
 }
-void Network::findAttractors(map<string, map<string, string> *> basins, map<string, int> edgeCount) {
+void Network::graphBasins(const char *fileName, map<string, map<string,string>*> basins, map<string, int> edgeCount) {
+    ofstream ofs;
+	ofs.open(fileName);
+	ofs << "digraph " << "G" << " {" << endl
+    << "layers=\"basins:edges:singles\";\n";
+    
+    //attractors with labels
+    for (map<string, map<string, string>*>::iterator it = basins.begin();
+         it != basins.end(); it++) {
+//		ofs << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
+		ofs
+        << "subgraph {\nnode[shape=box, style=unfilled, layer=\"basins\"];\n";
+		ofs << "\"" << it->first << "\" ;\n";
+		//edges that occur > 3 times
+		ofs
+        << "node[shape=point, layer=\"edges\", color=dodgerblue2, width=0.15, style=filled];\nedge[color=blue];\n";
+		ostringstream o;
+		for (map<string, string>::iterator itm = it->second->begin();
+             itm != it->second->end(); itm++) {
+			if (edgeCount.at(itm->first) > 3) {
+				ofs << "\"" << itm->second << "\" [width="
+                << log(edgeCount.at(itm->second)) / 15 << "];\n";
+				ofs << "\"" << itm->first << "\" -> \"" << itm->second << "\" "
+                << "[penwidth=" << log(edgeCount.at(itm->first)) * 2
+                <</* ", len="<< log(edgeCount.at(itm->first)) <<*/"];\n";
+			} else {
+				o << "\"" << itm->first << "\" -> \"" << itm->second << "\";\n";
+			}
+		}
+		//edges that occur <= 3 times
+		ofs
+        << "node[layer=\"singles\", color=gray25, width=0.05];\nedge[color=gray50, len=1];\n";
+		ofs << o.str() << "}\n";
+	}
+	ofs << "}";
+	ofs.close();
+
+}
+void Network::findAttractors(map<string, map<string, string> *>& basins, map<string, int>& edgeCount) {
     int networkSize = this->numProteins();
     for (int i = 0; i < pow(2, networkSize); i++) { //determine fixed point basin size
 		map<string, string>* edges;
@@ -279,65 +317,65 @@ void Network::printAttractors(map<string, map<string, string> *> basins, std::os
 		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
 	}
 }
+void Network::setStateTS() {
+    float meanExpLevel = 0;
+	for (vector<Protein*>::iterator it = this->_proteins->begin();
+         it != this->_proteins->end(); it++) {
+		meanExpLevel += (**it).tsLevel();
+	}
+	meanExpLevel /= this->_proteins->size();
+	for (vector<Protein*>::iterator it = this->_proteins->begin();
+         it != this->_proteins->end(); it++) {
+		if ((**it).tsLevel() > meanExpLevel) {
+			(**it).state(1);
+		} else {
+			(**it).state(-1);
+		}
+	}
+}
+void Network::setStateAB(map<string, map<string, string> *> basins) {
+    for (map<string, map<string, string>*>::iterator bit = basins.begin();
+         bit != basins.end(); bit++) {
+        this->reset();
+        this->setStates((bit)->first);
+        for (vector<Protein*>::iterator it = this->_proteins->begin();
+             it != this->_proteins->end(); it++) {
+            (*it)->abLevel((*it)->state() * ((bit)->second->size()+1));
+        }
+    }
+    float meanExpLevel = 0;
+	for (vector<Protein*>::iterator it = this->_proteins->begin();
+         it != this->_proteins->end(); it++) {
+		meanExpLevel += (**it).abLevel();
+	}
+	meanExpLevel /= this->_proteins->size();
+	for (vector<Protein*>::iterator it = this->_proteins->begin();
+         it != this->_proteins->end(); it++) {
+		if ((**it).abLevel() > meanExpLevel) {
+			(**it).state(1);
+		} else {
+			(**it).state(-1);
+		}
+	}
+}
 ostream& Network::basins(const char *fileName, ostream& os) {
 	map<string, map<string, string> *> basins;
 	map<string, int> edgeCount;
 
     //determine fixed point basin size
 	findAttractors(basins, edgeCount);
-	
-    //graph basins
-    ofstream ofs;
-	ofs.open(fileName);
-	ofs << "digraph " << "G" << " {" << endl
-    << "layers=\"basins:edges:singles\";\n";
+    printAttractors(basins, os);
     
-    //attractors with labels
-	for (map<string, map<string, string>*>::iterator it = basins.begin();
-			it != basins.end(); it++) {
-		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
-		ofs
-				<< "subgraph {\nnode[shape=box, style=unfilled, layer=\"basins\"];\n";
-		ofs << "\"" << it->first << "\" ;\n";
-		//edges that occur > 3 times
-		ofs
-				<< "node[shape=point, layer=\"edges\", color=dodgerblue2, width=0.15, style=filled];\nedge[color=blue];\n";
-		ostringstream o;
-		for (map<string, string>::iterator itm = it->second->begin();
-				itm != it->second->end(); itm++) {
-			if (edgeCount.at(itm->first) > 3) {
-				ofs << "\"" << itm->second << "\" [width="
-						<< log(edgeCount.at(itm->second)) / 15 << "];\n";
-				ofs << "\"" << itm->first << "\" -> \"" << itm->second << "\" "
-						<< "[penwidth=" << log(edgeCount.at(itm->first)) * 2
-						<</* ", len="<< log(edgeCount.at(itm->first)) <<*/"];\n";
-			} else {
-				o << "\"" << itm->first << "\" -> \"" << itm->second << "\";\n";
-			}
-		}
-		//edges that occur <= 3 times
-		ofs
-				<< "node[layer=\"singles\", color=gray25, width=0.05];\nedge[color=gray50, len=1];\n";
-		ofs << o.str() << "}\n";
-	}
-	ofs << "}";
-	ofs.close();
-
+    //graph basins
+    graphBasins(fileName, basins, edgeCount);
+    
+    //set states according to attractor*basin size
+    setStateAB(basins);
+    
 	//graph according to time series expression levels
-	float meanExpLevel = 0;
-	for (vector<Protein*>::iterator it = this->_proteins->begin();
-					it != this->_proteins->end(); it++) {
-		meanExpLevel += (**it).expLevel();
-	}
-	meanExpLevel /= this->_proteins->size();
-	for (vector<Protein*>::iterator it = this->_proteins->begin();
-				it != this->_proteins->end(); it++) {
-		if ((**it).expLevel() > meanExpLevel) {
-			(**it).state(1);
-		} else {
-			(**it).state(-1);
-		}
-	}
+	setStateTS();
+
+    
 	string tsGraph("timeSeries");
 	tsGraph.append(fileName);
 	this->graph(this->createGV(tsGraph));
@@ -352,26 +390,14 @@ ostream& Network::basins(ostream& os) {
 	findAttractors(basins, edgeCount);
     
 	//attractors with labels
-	for (map<string, map<string, string>*>::iterator it = basins.begin();
-			it != basins.end(); it++) {
-		os << "\t\t\t\"" << it->first << "\"\t" << it->second->size() + 1 << endl;
-	}
-
-	//graph according to time series expression levels
-	float meanExpLevel = 0;
-	for (vector<Protein*>::iterator it = this->_proteins->begin();
-					it != this->_proteins->end(); it++) {
-		meanExpLevel += (**it).expLevel();
-	}
-	meanExpLevel /= this->_proteins->size();
-	for (vector<Protein*>::iterator it = this->_proteins->begin();
-				it != this->_proteins->end(); it++) {
-		if ((**it).expLevel() > meanExpLevel) {
-			(**it).state(1);
-		} else {
-			(**it).state(-1);
-		}
-	}
+//    printAttractors(basins, os);
+    
+    //set states according to attractor*basin size
+    setStateAB(basins);
+	
+    //set states according to time series expression levels
+	setStateTS();
+    
 //	string tsGraph("timeSeries");
 //	tsGraph.append(fileName);
 //	this->graph(this->createGV(tsGraph));
