@@ -74,10 +74,14 @@ int main(int argc, const char * argv[]) {
     ostream tout(buft);
     out << "prevState\tattractor*basin\ttimeSeries\n";
 	for (int i = 0; i < 100; i++) {
+		cout << i + 1;
+		std::streambuf * buf = csv.rdbuf();
+		std::streambuf * buf0 = txt.rdbuf();
+		ostream out(buf);
+		ostream tout(buf0);
 		RandomNetwork r(n);
 		r.basins(tout);
-		tout << endl << i;
-		cout << i;
+		tout << endl << i + 1;
 		r.print(out);
 		//	r.fixedPointShort(r.binStr(1092));
 		//		r.graph(r.createGV("random"));
