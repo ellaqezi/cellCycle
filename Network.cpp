@@ -124,8 +124,10 @@ Network& Network::fixedPoint(map<string, string> &edges,
 	this->reset();
 	this->setStates(strState);
 	string prevNetState = "";
-	while (prevNetState != this->state()) {
-		prevNetState = this->state();
+    set<string> setOfStates;
+	while (setOfStates.count(this->state()) <= 0) {
+        setOfStates.insert(this->state());
+        prevNetState = this->state();
 		for (vector<Protein*>::iterator pit = _proteins->begin(); pit != _proteins->end(); pit++) {
 			(**pit).tsLevel((**pit).state());
 		}
@@ -364,7 +366,8 @@ ostream& Network::basins(const char *fileName, ostream& os) {
 
     //determine fixed point basin size
 	findAttractors(basins, edgeCount);
-    printAttractors(basins, os);
+    
+//    printAttractors(basins, os);
     
     //graph basins
     graphBasins(fileName, basins, edgeCount);
@@ -372,10 +375,10 @@ ostream& Network::basins(const char *fileName, ostream& os) {
     //set states according to attractor*basin size
     setStateAB(basins);
     
-	//graph according to time series expression levels
+    //set states according to time series expression levels
 	setStateTS();
 
-    
+    //graph according to time series expression levels
 	string tsGraph("timeSeries");
 	tsGraph.append(fileName);
 	this->graph(this->createGV(tsGraph));
@@ -389,8 +392,7 @@ ostream& Network::basins(ostream& os) {
     //determine fixed point basin size
 	findAttractors(basins, edgeCount);
     
-	//attractors with labels
-//    printAttractors(basins, os);
+    printAttractors(basins, os);
     
     //set states according to attractor*basin size
     setStateAB(basins);
@@ -398,9 +400,6 @@ ostream& Network::basins(ostream& os) {
     //set states according to time series expression levels
 	setStateTS();
     
-//	string tsGraph("timeSeries");
-//	tsGraph.append(fileName);
-//	this->graph(this->createGV(tsGraph));
 	return os;
 }
 void Network::basins() {
