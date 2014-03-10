@@ -8,6 +8,11 @@
 
 using namespace std;
 
+int Protein::_state = 0;
+int Protein::_prev = 0;
+float Protein::_tsLevel = 0;
+float Protein::_abLevel = 0;
+
 Protein::Protein() {
 	_name = "";
 	_activatedBy = new set<string>;

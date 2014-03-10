@@ -71,8 +71,8 @@ public:
 
 private:
 	std::string _name;
-	int _state = 0, _prev = 0;
-	float _tsLevel = 0, _abLevel = 0;
+	int _state, _prev;
+	float _tsLevel, _abLevel;
 	std::set<std::string> *_activatedBy;
 	std::set<std::string> *_deactivatedBy;
 	bool _negRegulated = false;
