@@ -4,6 +4,7 @@
  i.balce@jacobs-university.de
  */
 #include <iostream>
+#include <algorithm>
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -71,7 +72,7 @@ public:
 	std::string binStr(unsigned n);
     const char* createGV(int count);
     const char* createGV(std::string s);
-
+    const char* createGV(std::string st, int count);
 	friend std::ostream& operator<<(std::ostream& os, const Network& proteins);
 	friend std::ofstream& operator<<(std::ofstream& ofs,
 			const Network& proteins);

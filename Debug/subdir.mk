@@ -4,18 +4,21 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../Analysis.cpp \
 ../Network.cpp \
 ../Protein.cpp \
 ../RandomNetwork.cpp \
 ../main.cpp 
 
 OBJS += \
+./Analysis.o \
 ./Network.o \
 ./Protein.o \
 ./RandomNetwork.o \
 ./main.o 
 
 CPP_DEPS += \
+./Analysis.d \
 ./Network.d \
 ./Protein.d \
 ./RandomNetwork.d \

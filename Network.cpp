@@ -393,9 +393,8 @@ ostream& Network::basins(const char *fileName, ostream& os) {
 	//set states according to attractor*basin size
 	setStateAB(basins);
 	Network *ab = countActive();
-	cout << "connected/active: " << countConnected(*ab) << " / "
+	cout << "ab: " << countConnected(*ab) << " / "
 			<< ab->numProteins() << endl;
-//	ab->print();
 
 	//graph according to attractor*basin size expression levels
 	string abGraph("attractorBasin");
@@ -405,9 +404,8 @@ ostream& Network::basins(const char *fileName, ostream& os) {
 	//set states according to time series expression levels
 	setStateTS();
 	Network *ts = countActive();
-	cout << "connected/active: " << countConnected(*ts) << " / "
+	cout << "ts: " << countConnected(*ts) << " / "
 			<< ts->numProteins() << endl;
-	ts->print();
 
 	//graph according to time series expression levels
 	string tsGraph("timeSeries");
@@ -472,30 +470,19 @@ Network* Network::countActive() {
 }
 int Network::countConnected(Network& network) {
 	int count = 0;
+	bool connected = false;
+	set<string> links;
+	set<string> active;
 	for (vector<Protein*>::iterator it = network._proteins->begin();
 			it != network._proteins->end(); it++) {
-		bool connected = false;
-		set<string>::iterator si = (**it).activatedBy().begin();
-		while (!connected and si != (**it).activatedBy().end()) {
-			string protein = *si;
-			cout << protein << endl;
-			if (&(network.find(protein)) != NULL) {
-				si = (**it).activatedBy().end();
-				connected = true;
-			}
-			si++;
-		}
-//		if (!connected) {
-//			set<string>::iterator si = (**it).deactivatedBy().begin();
-//			while (!connected and si != (**it).deactivatedBy().end()) {
-//				if (&find(*si) != NULL) {
-//					si = (**it).deactivatedBy().end();
-//					connected = true;
-//				}
-//				si++;
-//			}
-
-		if (connected) {
+		active.insert((*it)->name());
+		set<string> act((**it).activatedBy());
+		set<string> deact((**it).deactivatedBy());
+		links.insert(act.begin(), act.end());
+		links.insert(deact.begin(), deact.end());
+	}
+	for (set<string>::iterator si = links.begin(); si != links.end(); si++) {
+		if (active.count(*si) != 0) {
 			count += 1;
 		}
 	}
@@ -519,7 +506,13 @@ const char* Network::createGV(string s) {
 //	cout << name;
 	return name.c_str();
 }
-
+const char* Network::createGV(string st, int count) {
+	stringstream ss;
+	string s;
+	ss << st << count << ".gv";
+	ss >> s;
+	return s.c_str();
+}
 ostream& operator<<(ostream& os, const Network& network) {
 	os << network.state() << endl;
 	return os;

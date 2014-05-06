@@ -8,34 +8,37 @@
 
 using namespace std;
 
-int Protein::_state = 0;
-int Protein::_prev = 0;
-float Protein::_tsLevel = 0;
-float Protein::_abLevel = 0;
-
 Protein::Protein() {
 	_name = "";
 	_activatedBy = new set<string>;
 	_deactivatedBy = new set<string>;
 	_negRegulated = false;
+	_state = 0, _prev = 0;
+	_abLevel = 0, _tsLevel = 0;
 }
 Protein::Protein(string name) :
 		_name(name) {
 	_activatedBy = new set<string>;
 	_deactivatedBy = new set<string>;
 	_negRegulated = false;
+	_state = 0, _prev = 0;
+	_abLevel = 0, _tsLevel = 0;
 }
 Protein::Protein(string name, int state, set<string> *activatedBy,
 		set<string> *deactivatedBy) :
 		_name(name), _state(state), _activatedBy(activatedBy), _deactivatedBy(
 				deactivatedBy) {
 	this->negRegulated();
+	_prev = 0;
+	_abLevel = 0, _tsLevel = 0;
 }
 Protein::Protein(const Protein &protein) :
 		_name(protein._name), _state(protein._state), _negRegulated(
 				protein._negRegulated) {
 	_activatedBy = new set<string>(*protein._activatedBy);
 	_deactivatedBy = new set<string>(*protein._deactivatedBy);
+	_prev = 0;
+	_abLevel = 0, _tsLevel = 0;
 }
 Protein::Protein(Protein* protein) :
 		_name(protein->_name), _state(protein->_state), _negRegulated(
@@ -44,6 +47,8 @@ Protein::Protein(Protein* protein) :
 			protein->_activatedBy->end());
 	_deactivatedBy = new set<string>(protein->_deactivatedBy->begin(),
 			protein->_deactivatedBy->end());
+	_prev = 0;
+	_abLevel = 0, _tsLevel = 0;
 }
 Protein::~Protein() {
 }
@@ -187,9 +192,9 @@ ostream& operator<<(std::ostream& os, set<string> *proteins) {
 	return os;
 }
 ostream& operator<<(std::ostream& os, const Protein& protein) {
-	os << protein._prev << protein._state << "\t" << protein._abLevel << "\t" << protein._tsLevel << "\t\t"
-			<< protein._name << " \t+ " << protein._activatedBy << "\t- "
-			<< protein._deactivatedBy << endl;
+	os << protein._prev << protein._state << "\t" << protein._abLevel << "\t"
+			<< protein._tsLevel << "\t\t" << protein._name << " \t+ "
+			<< protein._activatedBy << "\t- " << protein._deactivatedBy << endl;
 	return os;
 }
 ofstream& operator<<(std::ofstream& ofs, const Protein& protein) {
