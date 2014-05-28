@@ -14,9 +14,13 @@
 #include "Protein.h"
 #include "Network.h"
 #include "RandomNetwork.h"
+#include "Analysis.h"
+
+#include <boost/tokenizer.hpp>
 using namespace std;
 
 int main(int argc, const char * argv[]) {
+	srand(time(NULL));
 
 	Protein a;
 	a.name("Sic1").state(0);
@@ -48,13 +52,13 @@ int main(int argc, const char * argv[]) {
 
 	Network n;
 	n.addProtein(f);
-			n.addProtein(h).addProtein(g).addProtein(k).addProtein(j).addProtein(
-			e).addProtein(d).addProtein(i).addProtein(a).addProtein(b).addProtein(
-			c).addProtein(d).addProtein(e).addProtein(b);
+	n.addProtein(h).addProtein(g).addProtein(k).addProtein(j).addProtein(e).addProtein(
+			d).addProtein(i).addProtein(a).addProtein(b).addProtein(c).addProtein(
+			d).addProtein(e).addProtein(b);
 
 //	n.print();
 //	cout << "\nTemporal Evolution";
-//	n.fixedPoint("10001000100"); //start phase Cln3, Cdh1 and Sic1 are ON.
+//	n.fixedPoint("10001000100", true); //start phase Cln3, Cdh1 and Sic1 are ON.
 //	n.fixedPointShort("10001000100");
 //	n.fixedPoint(n.binStr(1092));
 //	n.print();
@@ -63,7 +67,8 @@ int main(int argc, const char * argv[]) {
 	n.graph("new.gv");
 
 //	cout << "\nFixed points and basin sizes\n";
-	n.basins();
+	Analysis cellCycle(&n);
+	cellCycle.basins();
 	n.print();
 
 	cout << endl;
@@ -76,11 +81,14 @@ int main(int argc, const char * argv[]) {
 //    out << "prevState\tattractor*basin\ttimeSeries\n";
 //	srand(time(NULL));
 //	for (int i = 0; i < 100; i++) {
-//		RandomNetwork r(n);
+	RandomNetwork r(11);
+	Analysis random(&r);
+	random.basins();
+	r.print();
 //		r.basins(tout);
 //		tout << endl << i + 1;
 //		r.print(out);
-////			r.fixedPointShort(r.binStr(1092));
+//			r.fixedPointShort(r.binStr(1092));
 //		r.graph(r.createGV("rnd", i));
 //	}
 //    csv.close();
@@ -91,9 +99,11 @@ int main(int argc, const char * argv[]) {
 //	r2.basins(cout);
 //	r2.print(cout);
 
+	Network csv(*(n.fromCSV("random5.csv")));
+//	csv.print();
+
 	return 0;
 }
-
 
 /*
  * TODO: control strength >> number of linked active nodes:number of active nodes; generate R0

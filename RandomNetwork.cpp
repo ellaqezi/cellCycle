@@ -68,7 +68,7 @@ RandomNetwork& RandomNetwork::randomise() {
 		if (!_proteins->at(p)->activatedBy().count(_proteins->at(op)->name())
 				&& !_proteins->at(p)->deactivatedBy().count(
 						_proteins->at(op)->name())) {
-			if (rand() % 15 == 0) {
+			if (rand() % 2 == 0) {
 				_proteins->at(p)->activatedBy(*_proteins->at(op));
 			} else {
 				_proteins->at(p)->deactivatedBy(*_proteins->at(op));

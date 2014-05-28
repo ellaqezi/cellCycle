@@ -34,21 +34,21 @@ Protein::Protein(string name, int state, set<string> *activatedBy,
 }
 Protein::Protein(const Protein &protein) :
 		_name(protein._name), _state(protein._state), _negRegulated(
-				protein._negRegulated) {
+				protein._negRegulated), _abLevel(protein._abLevel), _tsLevel(
+				protein._tsLevel) {
 	_activatedBy = new set<string>(*protein._activatedBy);
 	_deactivatedBy = new set<string>(*protein._deactivatedBy);
 	_prev = 0;
-	_abLevel = 0, _tsLevel = 0;
 }
 Protein::Protein(Protein* protein) :
 		_name(protein->_name), _state(protein->_state), _negRegulated(
-				protein->_negRegulated) {
+				protein->_negRegulated), _abLevel(protein->_abLevel), _tsLevel(
+				protein->_tsLevel) {
 	_activatedBy = new set<string>(protein->_activatedBy->begin(),
 			protein->_activatedBy->end());
 	_deactivatedBy = new set<string>(protein->_deactivatedBy->begin(),
 			protein->_deactivatedBy->end());
 	_prev = 0;
-	_abLevel = 0, _tsLevel = 0;
 }
 Protein::~Protein() {
 }
@@ -206,12 +206,12 @@ ofstream& operator<<(std::ofstream& ofs, const Protein& protein) {
 				<< "\" [shape=box, color=gray, style=filled];\n";
 	}
 	if (!protein._negRegulated) {
-		ofs << "\tedge [color=yellow]; \n";
+		ofs << "\tedge [color=yellow, arrowhead=normal]; \n";
 		ofs << "\t\"" << protein._name << "\" -> \"" << protein._name << "\";"
 				<< endl;
 	}
 	if (!protein._activatedBy->empty()) {
-		ofs << "\tedge [color=green]; \n";
+		ofs << "\tedge [color=green, arrowhead=normal]; \n";
 		for (set<string>::iterator it = protein._activatedBy->begin();
 				it != protein._activatedBy->end(); it++) {
 			ofs << "\t\"" << (*it) << "\" -> \"" << protein._name << "\";"
@@ -219,7 +219,7 @@ ofstream& operator<<(std::ofstream& ofs, const Protein& protein) {
 		}
 	}
 	if (!protein._deactivatedBy->empty()) {
-		ofs << "\tedge [color=red]; \n";
+		ofs << "\tedge [color=red, arrowhead=tee]; \n";
 		for (set<string>::iterator it = protein._deactivatedBy->begin();
 				it != protein._deactivatedBy->end(); it++) {
 			ofs << "\t\"" << (*it) << "\" -> \"" << protein._name << "\";"
