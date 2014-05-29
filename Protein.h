@@ -10,8 +10,12 @@
 #include <set>
 #include <string>
 
+#include <boost/tokenizer.hpp>
+
 #ifndef PROTEIN_H_
 #define PROTEIN_H_
+
+//typedef boost::tokenizer<boost::escaped_list_separator<char> > Tokenizer;
 
 class Protein {
 public:
@@ -21,6 +25,8 @@ public:
 			std::set<std::string> *deactivatedBy);
 	Protein(const Protein &protein); // copy constructor
 	Protein(Protein*);
+//	typedef boost::tokenizer<boost::escaped_list_separator<char> > Tokenizer;
+//	Protein(Tokenizer tok);
 	virtual ~Protein();
 
 	//service methods
@@ -45,7 +51,11 @@ public:
 	Protein& setABLevel(float sumOfStates);
 
 	Protein& activatedBy(Protein &regulator);
+	Protein& activatedBy(std::vector<std::string> regulators);
+	Protein& activatedBy(std::string regulators);
 	Protein& deactivatedBy(Protein &regulator);
+	Protein& deactivatedBy(std::vector<std::string> regulators);
+	Protein& deactivatedBy(std::string regulators);
 	Protein& negRegulated(bool onOff);
 	Protein& reset();
 	void negRegulated();

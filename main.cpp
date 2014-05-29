@@ -99,19 +99,21 @@ int main(int argc, const char * argv[]) {
 //	r2.basins(cout);
 //	r2.print(cout);
 
-	Network csv(*(n.fromCSV("random5.csv")));
+//	Network csv(*(n.fromCSV("random5.csv")));
+	Analysis csv("random5.csv");
+	csv.basins();
 //	csv.print();
 
 	return 0;
 }
 
 /*
- * TODO: control strength >> number of linked active nodes:number of active nodes; generate R0
- * TODO: generate 100 11-nodes random networks, run 10 basins() times
+ * control strength >> number of linked active nodes:number of active nodes; generate R0
+ * generate 100 11-nodes random networks, run 10 basins() times
  * convert binary on/off states to gene expression data
  * 	^-- snapshot, average of transient states (from initial on but prior to fixed point), other options??
  * create random network, ensure that all nodes are either +/- regulating another
  * VISUALIZATION of network
- * TODO: graph #attractors x edges // x activating/inhibitory links ratio
+ * graph #attractors x edges // x activating/inhibitory links ratio
  * TODO: describe gene expression generation
  */

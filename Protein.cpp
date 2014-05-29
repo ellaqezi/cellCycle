@@ -7,7 +7,7 @@
 #include "Protein.h"
 
 using namespace std;
-
+using namespace boost;
 Protein::Protein() {
 	_name = "";
 	_activatedBy = new set<string>;
@@ -50,6 +50,22 @@ Protein::Protein(Protein* protein) :
 			protein->_deactivatedBy->end());
 	_prev = 0;
 }
+//Protein::Protein(Tokenizer tok) {
+//	vector<string> vec;
+////	typedef tokenizer<escaped_list_separator<char> > Tokenizer;
+////	Tokenizer tok(s, escaped_list_separator<char>('\\', '\t', '\"'));
+//	vec.assign(tok.begin(), tok.end());
+//
+//	_name = (vec[3]);
+//	_negRegulated = false;
+//	_state = 0, _prev = 0;
+//
+//	_abLevel=(::atof(vec[1].c_str()));
+//	_tsLevel=(::atof(vec[2].c_str()));
+//
+//	this->activatedBy(vec[4]);
+//	this->deactivatedBy(vec[5]);
+//}
 Protein::~Protein() {
 }
 
@@ -111,9 +127,49 @@ Protein& Protein::activatedBy(Protein &regulator) {
 	_activatedBy->insert(_activatedBy->end(), regulator.name());
 	return *this;
 }
+Protein& Protein::activatedBy(vector<string> regulators) {
+	_activatedBy->insert(regulators.begin() + 1, regulators.end());
+	return *this;
+}
+Protein& Protein::activatedBy(string regulators) {
+	typedef tokenizer<escaped_list_separator<char> > Tokenizer;
+	vector<string> vact;
+
+	Tokenizer act(regulators, escaped_list_separator<char>('\\', ', ', '\"'));
+	vact.assign(act.begin(), act.end());
+	for (int i = 0; i < vact.size(); ++i) {
+		string key = ",";
+		unsigned found = (vact[i]).rfind(key);
+		if (found == (vact[i]).length() - 1) {
+			(vact[i]).replace(found, key.length(), "");
+		}
+	}
+	this->activatedBy(vact);
+	return *this;
+}
 Protein& Protein::deactivatedBy(Protein &regulator) {
 	_deactivatedBy->insert(_deactivatedBy->end(), regulator.name());
 	this->negRegulated();
+	return *this;
+}
+Protein& Protein::deactivatedBy(vector<string> regulators) {
+	_deactivatedBy->insert(regulators.begin() + 1, regulators.end());
+	return *this;
+}
+Protein& Protein::deactivatedBy(string regulators) {
+	typedef tokenizer<escaped_list_separator<char> > Tokenizer;
+	vector<string> vact;
+
+	Tokenizer act(regulators, escaped_list_separator<char>('\\', ', ', '\"'));
+	vact.assign(act.begin(), act.end());
+	for (int i = 0; i < vact.size(); ++i) {
+		string key = ",";
+		unsigned found = (vact[i]).rfind(key);
+		if (found == (vact[i]).length() - 1) {
+			(vact[i]).replace(found, key.length(), "");
+		}
+	}
+	this->deactivatedBy(vact);
 	return *this;
 }
 Protein& Protein::negRegulated(bool onOff) {

@@ -212,11 +212,7 @@ int Network::sum(set<string> posRegulators, set<string> negRegulators) {
 	return sumOfStates;
 }
 Protein& Network::find(string protein) {
-	string key = ",";
-	unsigned found = protein.rfind(key);
-	if (found == protein.length() - 1) {
-		protein.replace(found, key.length(), "");
-	}
+
 	Protein *p = NULL;
 	for (vector<Protein*>::iterator it = this->_proteins->begin();
 			it != this->_proteins->end(); it++) {
@@ -293,47 +289,36 @@ const char* Network::createGV(string st, int count) {
 	ss >> s;
 	return s.c_str();
 }
-Network* Network::fromCSV(const char *file) {
-	Network *n = new Network;
-	std::ifstream f;
-	std::string s;
-	f.open(file);
-	vector<string> vec;
-
-	typedef tokenizer<escaped_list_separator<char> > Tokenizer;
-	while (!f.eof()) {
-		while (getline(f, s)) {
-			Tokenizer tok(s, escaped_list_separator<char>('\\', '\t', '\"'));
-			vec.assign(tok.begin(), tok.end());
-
-			Protein *p = new Protein(vec[3]);
-			p->abLevel(::atof(vec[1].c_str()));
-			p->tsLevel(::atof(vec[2].c_str()));
-			{
-				vector<string> vact;
-
-				Tokenizer act(vec[4],
-						escaped_list_separator<char>('\\', ', ', '\"'));
-				vact.assign(act.begin(), act.end());
-				copy(vact.begin() + 1, vact.end(),
-						ostream_iterator < string > (cout, "|"));
-				cout << "\n----------------------" << endl;
-			}
-			n->_proteins->push_back(new Protein((*p)));
-
-			if (vec.size() < 3)
-				continue;
-
-//			copy(vec.begin(), vec.end(),
-//					ostream_iterator < string > (cout, "|"));
-//			cout << "\n----------------------" << endl;
-
-		}
-	}
-//	n->print();
-	f.close();
-	return n;
-}
+//Network* Network::fromCSV(const char *file) {
+//	std::ifstream f;
+//	std::string s;
+//	f.open(file);
+//	vector<string> vec;
+//	typedef tokenizer<escaped_list_separator<char> > Tokenizer;
+//
+//	Network *n = new Network;
+//	while (!f.eof()) {
+//
+//		while (getline(f, s)) {
+//			Tokenizer tok(s, escaped_list_separator<char>('\\', '\t', '\"'));
+//			vec.assign(tok.begin(), tok.end());
+////
+//			Protein *p = new Protein(vec[3]);
+////
+//			p->abLevel(::atof(vec[1].c_str()));
+//			p->tsLevel(::atof(vec[2].c_str()));
+//
+//			p->activatedBy(vec[4]);
+//			p->deactivatedBy(vec[5]);
+//
+//			n->_proteins->push_back(new Protein((*p)));
+//			if (vec.size() < 3)
+//				continue;
+//		}
+//	}
+//	f.close();
+//	return n;
+//}
 
 ostream& operator<<(ostream& os, const Network& network) {
 	os << network.state() << endl;

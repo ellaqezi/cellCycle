@@ -63,7 +63,7 @@ public:
 	const char* createGV(int count);
 	const char* createGV(std::string st, int count = -1);
 
-	Network* fromCSV(const char *fileName);
+//	Network* fromCSV(const char *fileName);
 
 	friend std::ostream& operator<<(std::ostream& os, const Network& proteins);
 	friend std::ofstream& operator<<(std::ofstream& ofs,
